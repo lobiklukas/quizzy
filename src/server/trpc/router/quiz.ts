@@ -11,6 +11,8 @@ export const QuizUpdateSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string().optional(),
+  studied: z.number().optional(),
+  selectedQuestionId: z.string().optional(),
 });
 
 export const quizRouter = router({
@@ -56,14 +58,9 @@ export const quizRouter = router({
           quizId: input.id,
         },
         select: {
-          // count
           id: true,
         },
       });
-      console.log(
-        "🚀 ~ file: quiz.ts ~ line 50 ~ .query ~ hasQuestion",
-        hasQuestion
-      );
 
       return ctx.prisma.quiz.findFirst({
         where: {

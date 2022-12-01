@@ -12,10 +12,11 @@ const QuestionCreateSchema = z.object({
 
 const QuestionUpdateSchema = z.object({
   id: z.string(),
-  order: z.number(),
-  title: z.string(),
-  quizId: z.string(),
-  answer: z.string(),
+  order: z.number().optional(),
+  title: z.string().optional(),
+  quizId: z.string().optional(),
+  answer: z.string().optional(),
+  learned: z.boolean().optional(),
 });
 
 export const questionRouter = router({
@@ -36,6 +37,18 @@ export const questionRouter = router({
       },
     });
   }),
+  unLearn: publicProcedure
+    .input(z.object({ quizId: z.string() }))
+    .mutation(({ input }) => {
+      return prisma?.question.updateMany({
+        where: {
+          quizId: input.quizId,
+        },
+        data: {
+          learned: false,
+        },
+      });
+    }),
   delete: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) => {
@@ -45,7 +58,4 @@ export const questionRouter = router({
         },
       });
     }),
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
-  }),
 });

@@ -70,7 +70,7 @@ model Quiz {
   updatedAt          DateTime   @default(now()) @updatedAt
   questions          Question[]
   selectedQuestionId String?
-  studied            Int        @default(0)
+  studied            Int?       @default(0)
 }
 
 model Question {

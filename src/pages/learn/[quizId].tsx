@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LearningCard } from "../../components/LearningCard";
 import { trpc } from "../../utils/trpc";
 
@@ -11,24 +11,103 @@ const Learn: NextPage = () => {
   const router = useRouter();
   const id = (router.query?.quizId as string) || "";
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [audio, setAudio] = useState<HTMLAudioElement>();
+  useEffect(() => {
+    setAudio(new Audio("/epicsaxguy.mp3"));
+  }, []);
+
+  const [selectedIndex, setSelectedIndex] = useState<number>();
   const [isEnd, setIsEnd] = useState(false);
 
-  const { data: quiz, isLoading } = trpc.quiz.findOne.useQuery({ id: id });
+  const {
+    data: quiz,
+    isLoading,
+    refetch,
+  } = trpc.quiz.findOne.useQuery({ id: id });
+
+  const { mutate: updateQuiz } = trpc.quiz.update.useMutation();
+  const { mutate: updateQuestion } = trpc.question.update.useMutation();
+  const { mutateAsync: unLearn } = trpc.question.unLearn.useMutation();
 
   const filteredQuestions = useMemo(
-    () => quiz?.questions.filter((question) => !question.learned),
+    () => quiz?.questions.filter((question) => !question.learned) ?? [],
     [quiz?.questions]
   );
 
-  const selectedQuestion = useMemo(
-    () => filteredQuestions?.[selectedIndex],
-    [filteredQuestions, selectedIndex]
-  );
+  useEffect(() => {
+    if (filteredQuestions.length === 0 && audio && audio.paused) {
+      audio?.play();
+      audio.loop = true;
+    } else {
+      audio?.pause();
+    }
+    return () => {
+      audio?.pause();
+    };
+  }, [audio, filteredQuestions.length]);
+
+  const selectedQuestion = useMemo(() => {
+    if (filteredQuestions) {
+      return filteredQuestions[selectedIndex ?? 0];
+    }
+  }, [filteredQuestions, selectedIndex]);
+
+  useEffect(() => {
+    if (quiz && selectedIndex === undefined) {
+      setSelectedIndex(
+        filteredQuestions?.findIndex(
+          (question) => question.id === quiz.selectedQuestionId
+        )
+      );
+    }
+  }, [filteredQuestions, quiz, selectedIndex]);
+
+  useEffect(() => {
+    if (selectedQuestion?.id && quiz?.id) {
+      updateQuiz({
+        ...quiz,
+        id: quiz.id,
+        studied: quiz.studied ?? 0,
+        selectedQuestionId: selectedQuestion.id,
+      });
+    }
+  }, [quiz, selectedQuestion?.id, updateQuiz]);
 
   if (isLoading || !quiz) {
     return <div>Loading...</div>;
   }
+
+  const handleNext = () => {
+    if (
+      selectedIndex !== undefined &&
+      selectedIndex < filteredQuestions.length - 1
+    ) {
+      if (selectedQuestion?.id) {
+        updateQuestion({
+          id: selectedQuestion.id,
+        });
+      }
+      setSelectedIndex(selectedIndex + 1);
+    } else {
+      setIsEnd(true);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (selectedIndex !== undefined && selectedIndex > 0) {
+      setSelectedIndex(selectedIndex - 1);
+    }
+  };
+
+  const handleLearned = () => {
+    if (selectedQuestion?.id) {
+      updateQuestion({
+        id: selectedQuestion.id,
+        learned: true,
+      });
+    }
+    handleNext();
+  };
 
   return (
     <main className="container  mx-auto min-h-screen">
@@ -42,7 +121,7 @@ const Learn: NextPage = () => {
       </nav>
 
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
-        {quiz && (
+        {!!filteredQuestions.length && (
           <>
             <div
               key={quiz.id}
@@ -52,11 +131,11 @@ const Learn: NextPage = () => {
               <p className="text-lg">{quiz.description}</p>
             </div>
             <div className="flex w-full flex-col items-center justify-center gap-2">
-              {selectedIndex + 1} / {quiz.questions.length}
+              {(selectedIndex ?? 0) + 1} / {filteredQuestions?.length}
               <progress
                 className="flip progress my-4 w-full"
-                value={selectedIndex + 1}
-                max={quiz.questions?.length}
+                value={(selectedIndex ?? 0) + 1}
+                max={filteredQuestions?.length}
               />
             </div>
             {isEnd ? (
@@ -83,15 +162,21 @@ const Learn: NextPage = () => {
                       />
                     </div>
                     <Image
-                      src="/happy-end.gif"
+                      src="/happy.gif"
                       width={200}
                       height={300}
                       alt="end"
                     />
                     <button
                       className="btn-primary btn"
-                      onClick={() => {
+                      onClick={async () => {
+                        await refetch();
                         setSelectedIndex(0);
+                        updateQuiz({
+                          ...quiz,
+                          studied: (quiz?.studied ?? 0) + 1,
+                          selectedQuestionId: filteredQuestions?.[0]?.id,
+                        });
                         setIsEnd(false);
                       }}
                     >
@@ -103,7 +188,11 @@ const Learn: NextPage = () => {
             ) : (
               selectedQuestion && (
                 <div className="mt-2 w-full">
-                  <LearningCard data={selectedQuestion} />
+                  <LearningCard
+                    handleLerning={handleNext}
+                    handleLearned={handleLearned}
+                    data={selectedQuestion}
+                  />
                 </div>
               )
             )}
@@ -111,35 +200,59 @@ const Learn: NextPage = () => {
         )}
       </div>
 
-      {!isEnd && (
-        <nav className="mt-auto flex items-center justify-center gap-4 p-4 px-16">
-          <button
-            onClick={() => {
-              if (selectedIndex > 0) {
-                setSelectedIndex(selectedIndex - 1);
+      {!isEnd ||
+        (filteredQuestions.length && (
+          <nav className="mt-auto flex items-center justify-center gap-4 p-4 px-16">
+            <button
+              onClick={handlePrevious}
+              disabled={selectedIndex === 0}
+              className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
+            >
+              <ArrowLeftIcon className="h-6 w-6" />
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={
+                selectedIndex === quiz?.questions?.length || !filteredQuestions
               }
-            }}
-            disabled={selectedIndex === 0}
-            className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
-          >
-            <ArrowLeftIcon className="h-6 w-6" />
-          </button>
+              className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
+            >
+              <ArrowRightIcon className="h-6 w-6" />
+            </button>
+          </nav>
+        ))}
+
+      {!filteredQuestions.length && (
+        <div className="flex flex-col items-center justify-center gap-4 p-4 px-16">
+          <div className="rotate-12">
+            <h1 className="rotate-45 animate-bounce text-3xl font-bold">
+              Good job!
+            </h1>
+          </div>
+          <div className="-rotate-6">
+            <h1 className="rotate-45 animate-bounce text-4xl font-bold">
+              You are amazing!
+            </h1>
+          </div>
+          <Image
+            src="/end.gif"
+            width={200}
+            height={300}
+            alt="end"
+            className="duration-70 animate-pulse"
+          />
           <button
-            onClick={() => {
-              if (selectedIndex < quiz?.questions?.length - 1) {
-                setSelectedIndex(selectedIndex + 1);
-              } else {
-                setIsEnd(true);
-              }
+            onClick={async () => {
+              await unLearn({ quizId: quiz.id });
+              await refetch();
+              setSelectedIndex(0);
+              setIsEnd(false);
             }}
-            disabled={
-              selectedIndex === quiz?.questions?.length || !quiz.questions
-            }
-            className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
+            className="btn-primary btn animate-spin"
           >
-            <ArrowRightIcon className="h-6 w-6" />
+            Restart progress
           </button>
-        </nav>
+        </div>
       )}
     </main>
   );

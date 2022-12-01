@@ -113,6 +113,8 @@ const Home: NextPage = () => {
     const values = methods.getValues();
     await updateQuiz({
       ...values,
+      studied: quiz?.studied ?? 0,
+      selectedQuestionId: quiz?.selectedQuestionId ?? "",
       id,
     });
   };
