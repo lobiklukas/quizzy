@@ -20,10 +20,6 @@ const QuestionUpdateSchema = z.object({
 
 export const questionRouter = router({
   create: publicProcedure.input(QuestionCreateSchema).mutation(({ input }) => {
-    console.log(
-      "🚀 ~ file: question.ts ~ line 26 ~ create:publicProcedure.input ~ input",
-      input
-    );
     return prisma?.question.create({
       data: {
         ...input,
@@ -31,10 +27,6 @@ export const questionRouter = router({
     });
   }),
   update: publicProcedure.input(QuestionUpdateSchema).mutation(({ input }) => {
-    console.log(
-      "🚀 ~ file: question.ts ~ line 43 ~ update:publicProcedure.input ~ input",
-      input
-    );
     return prisma?.question.update({
       where: {
         id: input.id,

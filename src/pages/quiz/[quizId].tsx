@@ -60,7 +60,7 @@ const Home: NextPage = () => {
     mode: "onBlur",
   });
 
-  const { register, control, reset, watch } = methods;
+  const { register, control, reset } = methods;
 
   useEffect(() => {
     if (quiz !== undefined) {
@@ -72,8 +72,6 @@ const Home: NextPage = () => {
       );
     }
   }, [quiz, reset]);
-
-  console.log(watch());
 
   const { fields, append, remove, move } = useFieldArray({
     name: "questions",
@@ -103,13 +101,29 @@ const Home: NextPage = () => {
     }
   };
 
+  const handleUpdateQuestion = async (index: number) => {
+    const values = methods.getValues(`questions.${index}`);
+    await updateQuestion({
+      ...values,
+      quizId: id,
+    });
+  };
+
+  const handleUpdateQuiz = async () => {
+    const values = methods.getValues();
+    await updateQuiz({
+      ...values,
+      id,
+    });
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <FormProvider {...methods}>
-      <main className="flex flex-col items-center justify-center bg-slate-100">
+      <main className="justify-cente container mx-auto flex flex-col items-center">
         <nav className="flex w-full items-center justify-between p-4 px-16">
           <Link
             href="/"
@@ -136,13 +150,7 @@ const Home: NextPage = () => {
                 </label>
                 <input
                   {...register("title", {
-                    onBlur: async (e) => {
-                      e.target.value = e.target.value.trim();
-                      await updateQuiz({
-                        ...quiz,
-                        title: e.target.value,
-                      });
-                    },
+                    onBlur: handleUpdateQuiz,
                   })}
                   className="input-bordered input w-full"
                 />
@@ -153,14 +161,7 @@ const Home: NextPage = () => {
                 </label>
                 <input
                   {...register("description", {
-                    onBlur: async (e) => {
-                      e.target.value = e.target.value.trim();
-                      await updateQuiz({
-                        id: quiz.id,
-                        title: quiz.title,
-                        description: e.target.value,
-                      });
-                    },
+                    onBlur: handleUpdateQuiz,
                   })}
                   className="input-bordered input w-full"
                 />
@@ -218,16 +219,7 @@ const Home: NextPage = () => {
                           />
                           <input
                             {...register(`questions.${index}.title` as const, {
-                              onBlur: async (e) => {
-                                e.target.value = e.target.value.trim();
-                                await updateQuestion({
-                                  id: question.id,
-                                  quizId: quiz.id,
-                                  title: e.target.value,
-                                  answer: question.answer ?? "",
-                                  order: index + 1,
-                                });
-                              },
+                              onBlur: async () => handleUpdateQuestion(index),
                             })}
                             className="input-bordered input-ghost input w-full"
                           />
@@ -240,15 +232,7 @@ const Home: NextPage = () => {
                         </div>
                         <EditorWrapper
                           name={`questions.${index}.answer` as const}
-                          onBlur={async (value: string) => {
-                            await updateQuestion({
-                              ...question,
-                              title: question.title ?? "",
-                              quizId: quiz.id,
-                              answer: value ?? "",
-                              order: index + 1,
-                            });
-                          }}
+                          onBlur={() => handleUpdateQuestion(index)}
                         />
                       </div>
                     );
