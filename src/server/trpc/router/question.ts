@@ -20,27 +20,31 @@ const QuestionUpdateSchema = z.object({
 });
 
 export const questionRouter = router({
-  create: publicProcedure.input(QuestionCreateSchema).mutation(({ input }) => {
-    return prisma?.question.create({
-      data: {
-        ...input,
-      },
-    });
-  }),
-  update: publicProcedure.input(QuestionUpdateSchema).mutation(({ input }) => {
-    return prisma?.question.update({
-      where: {
-        id: input.id,
-      },
-      data: {
-        ...input,
-      },
-    });
-  }),
+  create: publicProcedure
+    .input(QuestionCreateSchema)
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma?.question.create({
+        data: {
+          ...input,
+        },
+      });
+    }),
+  update: publicProcedure
+    .input(QuestionUpdateSchema)
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma?.question.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          ...input,
+        },
+      });
+    }),
   unLearn: publicProcedure
     .input(z.object({ quizId: z.string() }))
-    .mutation(({ input }) => {
-      return prisma?.question.updateMany({
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma?.question.updateMany({
         where: {
           quizId: input.quizId,
         },
@@ -51,8 +55,8 @@ export const questionRouter = router({
     }),
   delete: publicProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(({ input }) => {
-      return prisma?.question.delete({
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma?.question.delete({
         where: {
           id: input.id,
         },

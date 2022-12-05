@@ -24,8 +24,8 @@ export const quizRouter = router({
       },
     });
   }),
-  update: publicProcedure.input(QuizUpdateSchema).mutation(({ input }) => {
-    return prisma?.quiz.update({
+  update: publicProcedure.input(QuizUpdateSchema).mutation(({ input, ctx }) => {
+    return ctx.prisma?.quiz.update({
       where: {
         id: input.id,
       },
@@ -36,8 +36,8 @@ export const quizRouter = router({
   }),
   deleteOne: publicProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(({ input }) => {
-      return prisma?.quiz.delete({
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma?.quiz.delete({
         where: {
           id: input.id,
         },
