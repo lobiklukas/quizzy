@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { LearningCard } from "../../components/LearningCard";
+import Loading from "../../components/Loading";
 import { trpc } from "../../utils/trpc";
 
 const Learn: NextPage = () => {
@@ -74,7 +75,7 @@ const Learn: NextPage = () => {
   }, [quiz, selectedQuestion?.id, updateQuiz]);
 
   if (isLoading || !quiz) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   const handleNext = () => {

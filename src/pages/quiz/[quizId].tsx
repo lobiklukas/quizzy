@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import Loading from "../../components/Loading";
 import { EditorWrapper } from "../../EditorWrapper";
 import { trpc } from "../../utils/trpc";
 
@@ -120,7 +121,7 @@ const Home: NextPage = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (

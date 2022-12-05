@@ -1,32 +1,20 @@
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import type { Quiz } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import Loading from "../components/Loading";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
-  const utils = trpc.useContext();
-
-  const { data, isLoading } = trpc.quiz.getAll.useQuery();
+  const { data, isLoading, refetch } = trpc.quiz.getAll.useQuery();
   const { mutate: createQuiz } = trpc.quiz.create.useMutation({
-    onMutate: (newQuiz) => {
-      const oldQuizes = utils.quiz.getAll.getData();
-      utils.quiz.getAll.setData(undefined, [...(oldQuizes as any[]), newQuiz]);
-
-      // Return a context object with the snapshotted value
-      return [...(oldQuizes as any[]), newQuiz];
+    onSettled: async () => {
+      await refetch();
     },
   });
   const { mutate: deleteQuiz } = trpc.quiz.deleteOne.useMutation({
-    onMutate: (newQuiz) => {
-      const oldQuizes = utils.quiz.getAll.getData();
-      const updatedQuizes = oldQuizes?.filter((quiz) => quiz.id !== newQuiz.id);
-      utils.quiz.getAll.setData(undefined, updatedQuizes);
-
-      // Return a context object with the snapshotted value
-      return updatedQuizes;
+    onSettled: async () => {
+      await refetch();
     },
   });
 
@@ -38,7 +26,7 @@ const Home: NextPage = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
