@@ -1,5 +1,6 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import _ from "lodash";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,6 +8,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import Loading from "../../components/Loading";
 import { EditorWrapper } from "../../EditorWrapper";
+import type { QuizUpdateSchemaType } from "../../server/trpc/router/quiz";
 import { trpc } from "../../utils/trpc";
 
 type Question = {
@@ -29,6 +31,7 @@ const Home: NextPage = () => {
   const id = (router.query?.quizId as string) || "";
 
   const [enableRefetch, setEnableRefetch] = useState(true);
+  const [lastSubmitted, setLastSubmitted] = useState<QuizUpdateSchemaType>();
 
   const {
     data: quiz,
@@ -102,23 +105,38 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleUpdateQuestion = async (index: number) => {
-    const values = methods.getValues(`questions.${index}`);
-    await updateQuestion({
-      ...values,
-      quizId: id,
-    });
-  };
-
-  const handleUpdateQuiz = async () => {
+  const handleUpdateQuestion = _.debounce(async (index: number) => {
     const values = methods.getValues();
-    await updateQuiz({
+    const question = values.questions[index];
+
+    if (_.isEqual(values, lastSubmitted)) {
+      await updateQuestion({
+        ...question,
+        quizId: id,
+        id: question?.id ?? "",
+      });
+      setLastSubmitted({
+        ...values,
+        studied: quiz?.studied ?? 0,
+        selectedQuestionId: quiz?.selectedQuestionId ?? "",
+        id,
+      });
+    }
+  }, 1000);
+
+  const handleUpdateQuiz = _.debounce(async () => {
+    const values = methods.getValues();
+    const updateObject = {
       ...values,
       studied: quiz?.studied ?? 0,
       selectedQuestionId: quiz?.selectedQuestionId ?? "",
       id,
-    });
-  };
+    };
+    if (!_.isEqual(updateObject, lastSubmitted)) {
+      await updateQuiz(updateObject);
+      setLastSubmitted(updateObject);
+    }
+  }, 1000);
 
   if (isLoading) {
     return <Loading />;
@@ -147,6 +165,14 @@ const Home: NextPage = () => {
               className="flex flex-col items-center justify-center gap-2"
             >
               <input {...register("id")} type="hidden" />
+              <input {...register("selectedQuestionId")} type="hidden" />
+              <input
+                {...register("studied", {
+                  // return as number
+                  valueAsNumber: true,
+                })}
+                type="hidden"
+              />
               <div className="w-full">
                 <label className="label">
                   <span className="label-text">Title</span>
@@ -154,6 +180,7 @@ const Home: NextPage = () => {
                 <input
                   {...register("title", {
                     onBlur: handleUpdateQuiz,
+                    onChange: handleUpdateQuiz,
                   })}
                   className="input-bordered input w-full"
                 />
@@ -165,6 +192,7 @@ const Home: NextPage = () => {
                 <input
                   {...register("description", {
                     onBlur: handleUpdateQuiz,
+                    onChange: handleUpdateQuiz,
                   })}
                   className="input-bordered input w-full"
                 />
@@ -179,7 +207,7 @@ const Home: NextPage = () => {
                     return (
                       <div
                         key={question.id}
-                        className="card flex flex-col items-center justify-center gap-2 bg-base-100 p-8 shadow-xl"
+                        className="card flex max-w-[800px] flex-col items-center justify-center gap-2 bg-base-100 p-8 shadow-xl"
                       >
                         <div className="flex w-full items-center gap-x-2">
                           <input
@@ -223,6 +251,7 @@ const Home: NextPage = () => {
                           <input
                             {...register(`questions.${index}.title` as const, {
                               onBlur: async () => handleUpdateQuestion(index),
+                              onChange: async () => handleUpdateQuestion(index),
                             })}
                             className="input-bordered input-ghost input w-full"
                           />
@@ -236,6 +265,7 @@ const Home: NextPage = () => {
                         <EditorWrapper
                           name={`questions.${index}.answer` as const}
                           onBlur={() => handleUpdateQuestion(index)}
+                          onChange={() => handleUpdateQuestion(index)}
                         />
                       </div>
                     );

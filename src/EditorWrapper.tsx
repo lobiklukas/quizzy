@@ -6,7 +6,8 @@ const Editor = dynamic(() => import("./Editor"), { ssr: false });
 
 interface IEditorWrapperProps {
   name: string;
-  onBlur: (e: string) => void;
+  onBlur: () => void;
+  onChange: () => void;
 }
 
 const isServer = () => typeof window === `undefined`;
@@ -14,6 +15,7 @@ const isServer = () => typeof window === `undefined`;
 export const EditorWrapper: React.FC<IEditorWrapperProps> = ({
   name,
   onBlur: onBlurValue,
+  onChange: onChangeValue,
 }) => {
   const { control } = useFormContext();
 
@@ -30,10 +32,16 @@ export const EditorWrapper: React.FC<IEditorWrapperProps> = ({
           }) => (
             <Editor
               onBlur={() => {
-                onBlurValue(value);
+                onBlurValue();
                 onBlur();
               }} // notify when input is touched
-              onChange={onChange} // send value to hook form
+              onChange={(changedValue) => {
+                console.log("🚀 ~ file: EditorWrapper.tsx ~ line 40 ~ changedValue !== value", changedValue !== value)
+                if (changedValue !== value) {
+                  onChange(changedValue);
+                  onChangeValue();
+                }
+              }} // send value to hook form
               value={value} // set value from hook form
             />
           )}

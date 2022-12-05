@@ -19,6 +19,9 @@ const QuestionUpdateSchema = z.object({
   learned: z.boolean().optional(),
 });
 
+export type QuizUpdateSchemaType = z.infer<typeof QuestionUpdateSchema>;
+
+
 export const questionRouter = router({
   create: publicProcedure
     .input(QuestionCreateSchema)

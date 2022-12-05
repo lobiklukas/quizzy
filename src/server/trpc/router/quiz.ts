@@ -15,6 +15,11 @@ export const QuizUpdateSchema = z.object({
   selectedQuestionId: z.string().optional(),
 });
 
+// Create type for QuizUpdateSchema
+export type QuizUpdateSchemaType = z.infer<
+  typeof QuizUpdateSchema & { questions: QuizUpdateSchemaType[] }
+>;
+
 export const quizRouter = router({
   create: publicProcedure.input(QuizCreateSchema).mutation(({ input, ctx }) => {
     return ctx.prisma.quiz.create({

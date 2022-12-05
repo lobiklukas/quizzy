@@ -7,6 +7,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import "react-quill/dist/quill.snow.css";
 import { EditorWrapper } from "../EditorWrapper";
 import { trpc } from "../utils/trpc";
+
+import _ from "lodash";
 export interface ILergingCardProps {
   data: Question;
   handleLerning: () => void;
@@ -35,6 +37,10 @@ export function LearningCard({
       quizId: data.quizId as string,
     });
   };
+
+  const updateOnChange = _.debounce(() => {
+    handleUpdate();
+  });
 
   return (
     <div onClick={() => setShowAnswer(!showAnswer)}>
@@ -82,7 +88,10 @@ export function LearningCard({
             </div>
             <div className="card-body my-auto h-full items-center">
               {editMode ? (
-                <div className="w-full h-full my-auto" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="my-auto h-full w-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <EditorWrapper name="answer" onBlur={handleUpdate} />
                 </div>
               ) : (
