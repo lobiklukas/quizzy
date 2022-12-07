@@ -2,10 +2,12 @@ import dynamic from "next/dynamic";
 import React from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import QuillCursors from "quill-cursors";
 
 import ImageCompress from "quill-image-compress";
 
 Quill.register("modules/imageCompress", ImageCompress);
+Quill.register("modules/cursors", QuillCursors);
 
 interface IEditorProps {
   value: string;
@@ -28,6 +30,7 @@ const modules = {
     [{ align: [] }],
     ["clean"], // remove formatting button
   ],
+  cursors: true,
 };
 
 const Editor: React.FC<IEditorProps> = ({ value, onBlur, onChange }) => {

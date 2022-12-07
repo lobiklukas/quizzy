@@ -2105,6 +2105,11 @@ quick-lru@^5.1.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-5.1.1.tgz#366493e6b3e42a3a6885e2e99d18f80fb7a8c932"
   integrity sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==
 
+quill-cursors@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/quill-cursors/-/quill-cursors-4.0.0.tgz#40158d3eeac0b35d734e50c42bef16ae2c65c15b"
+  integrity sha512-nCwCZtQPl4EnxJSheHtb067Jo48A6mc8/t7waGSLqXvbE68a5vHBFfMOQPZI7jxjksbDhpfzQta3a3/MoPvKzQ==
+
 quill-delta@^3.6.2:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/quill-delta/-/quill-delta-3.6.3.tgz#b19fd2b89412301c60e1ff213d8d860eac0f1032"

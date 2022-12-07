@@ -4,7 +4,7 @@ import _ from "lodash";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import Loading from "../../components/Loading";
 import { EditorWrapper } from "../../EditorWrapper";
@@ -50,7 +50,10 @@ const Home: NextPage = () => {
   }, [enableRefetch, isSuccess]);
 
   const [storedValue, storeValue] = useLocalStorage("quiz", quiz);
-
+  const [lastSubmit, setLastSubmit] = useState<{
+    updated: Date;
+    values: any;
+  }>();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const { mutateAsync: create, isLoading: isCreateLoading } =
@@ -64,25 +67,27 @@ const Home: NextPage = () => {
 
   const methods = useForm({
     defaultValues: quiz ?? {},
-    mode: "onBlur",
+    mode: "onChange",
   });
 
-  const { register, control, reset } = methods;
+  const { register } = methods;
+
+  const updatedAt = methods.getValues("updatedAt");
 
   useEffect(() => {
     if (quiz !== undefined) {
-      reset(
+      methods.reset(
         {
           ...quiz,
           questions: quiz?.questions ?? [],
         } ?? defaultQuiz
       );
     }
-  }, [quiz, reset]);
+  }, [quiz, methods.reset, methods]);
 
   const { fields, append, remove, move } = useFieldArray({
     name: "questions",
-    control,
+    control: methods.control,
     keyName: "cid",
   });
 
@@ -98,58 +103,59 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleRemoveQuestion = async (index: number) => {
+  const handleRemoveQuestion = async (id: string) => {
+    const index = fields.findIndex((q) => q.id === id);
     const question = fields[index];
+
     if (question) {
-      await deleteOne({
+      deleteOne({
         id: question.id,
       });
       remove(index);
+      console.log(
+        "🚀 ~ file: [quizId].tsx ~ line 113 ~ handleRemoveQuestion ~ index",
+        index
+      );
+      console.log(fields);
     }
   };
 
-  const handleUpdateQuestion = _.debounce(async (index: number) => {
+  const handleSave = useCallback(async () => {
     const values = methods.getValues();
-    const question = values.questions[index];
     storeValue(values);
-    await updateQuestion({
-      ...question,
-      quizId: id,
-      id: question?.id ?? "",
-    });
-  }, 1000);
 
-  const handleUpdateQuiz = _.debounce(async () => {
-    const values = methods.getValues();
-    storeValue(values);
-    const updateObject = {
+    const result = await updateQuiz({
       ...values,
-      studied: quiz?.studied ?? 0,
-      selectedQuestionId: quiz?.selectedQuestionId ?? "",
-      id,
-    };
-    await updateQuiz(updateObject);
-  }, 1000);
-
-  const handleSaveEverything = async () => {
-    const promises = [];
-    const res = await handleUpdateQuiz();
-    promises.push(res);
-    fields.forEach(async (field) => {
-      await updateQuestion({
-        ...field,
+      id: id,
+      selectedQuestionId: values.selectedQuestionId ?? "",
+      studied: values.studied ?? 0,
+      questions: values.questions.map((q) => ({
+        ...q,
         quizId: id,
-        id: field?.id ?? "",
-      });
-      promises.push(res);
+      })),
     });
+    if (result) {
+      setLastSubmit({ updated: result.updatedAt, values: values });
+      setToastMessage("Saved");
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 1000);
+    }
+  }, [id, methods, storeValue, updateQuiz]);
 
-    await Promise.all(promises);
-    setToastMessage("Saved");
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 2000);
-  };
+  // save every 20 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (lastSubmit) {
+        const diff = new Date().getTime() - lastSubmit.updated.getTime();
+        const values = methods.getValues();
+        if (diff > 20000 && !_.isEqual(values, lastSubmit.values)) {
+          handleSave();
+        }
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [handleSave, lastSubmit, methods]);
 
   if (isLoading) {
     return <Loading />;
@@ -157,23 +163,34 @@ const Home: NextPage = () => {
 
   return (
     <FormProvider {...methods}>
-      <main className="justify-cente container mx-auto flex flex-col items-center">
-        <nav className="flex w-full items-center justify-between p-4 px-16">
-          <Link
-            href="/"
-            className=" font-bold text-gray-800 hover:text-gray-700"
+      <nav className="sticky top-0 z-50 flex w-full items-center justify-between border-b-2 bg-white p-4 px-16">
+        <Link href="/" className=" font-bold text-gray-800 hover:text-gray-700">
+          Back
+        </Link>
+        <div className="flex items-center gap-2">
+          {isCreateLoading ||
+          isUpdateQuizLoading ||
+          isUpdateQuestionLoading ||
+          isDeleteLoading ? (
+            <div className="text-gray-800">Saving...</div>
+          ) : (
+            <span>
+              Naposledy uloženo:{" "}
+              {(lastSubmit?.updated ?? updatedAt)?.toLocaleString("cs")}
+            </span>
+          )}
+          <button
+            className="btn-secondary btn"
+            onClick={() => methods.reset(storedValue)}
           >
-            Back
-          </Link>
-          {(isCreateLoading ||
-            isUpdateQuizLoading ||
-            isUpdateQuestionLoading ||
-            isDeleteLoading) && <div className="text-gray-800">Saving...</div>}
-          <button className="btn-primary btn" onClick={handleSaveEverything}>
+            Load
+          </button>
+          <button className="btn-primary btn" onClick={() => handleSave()}>
             Save
           </button>
-        </nav>
-
+        </div>
+      </nav>
+      <main className="container mx-auto mt-12 flex flex-col items-center justify-center">
         <div className="flex min-h-screen flex-col items-center justify-center">
           {quiz && (
             <div
@@ -194,9 +211,7 @@ const Home: NextPage = () => {
                   <span className="label-text">Title</span>
                 </label>
                 <input
-                  {...register("title", {
-                    onBlur: handleUpdateQuiz,
-                  })}
+                  {...register("title", {})}
                   className="input-bordered input w-full"
                 />
               </div>
@@ -205,10 +220,7 @@ const Home: NextPage = () => {
                   <span className="label-text">Description</span>
                 </label>
                 <input
-                  {...register("description", {
-                    onBlur: handleUpdateQuiz,
-                    onChange: handleUpdateQuiz,
-                  })}
+                  {...register("description")}
                   className="input-bordered input w-full"
                 />
               </div>
@@ -260,17 +272,25 @@ const Home: NextPage = () => {
                           />
                           .
                           <input
-                            {...register(`questions.${index}.id` as const)}
+                            {...register(`questions.${index}.id` as const, {})}
                             type="hidden"
                           />
                           <input
-                            {...register(`questions.${index}.title` as const, {
-                              onBlur: async () => handleUpdateQuestion(index),
-                            })}
+                            {...register(
+                              `questions.${index}.quizId` as const,
+                              {}
+                            )}
+                            type="hidden"
+                          />
+                          <input
+                            {...register(
+                              `questions.${index}.title` as const,
+                              {}
+                            )}
                             className="input-bordered input-ghost input w-full"
                           />
                           <button
-                            onClick={() => handleRemoveQuestion(index)}
+                            onClick={() => handleRemoveQuestion(question.id)}
                             className="btn-secondary btn-square btn"
                           >
                             <TrashIcon className="h-6 w-6" />
@@ -278,7 +298,6 @@ const Home: NextPage = () => {
                         </div>
                         <EditorWrapper
                           name={`questions.${index}.answer` as const}
-                          onBlur={() => handleUpdateQuestion(index)}
                         />
                       </div>
                     );

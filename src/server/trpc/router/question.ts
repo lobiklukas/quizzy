@@ -10,7 +10,7 @@ const QuestionCreateSchema = z.object({
   answer: z.string(),
 });
 
-const QuestionUpdateSchema = z.object({
+export const QuestionUpdateSchema = z.object({
   id: z.string(),
   order: z.number().optional(),
   title: z.string().optional(),

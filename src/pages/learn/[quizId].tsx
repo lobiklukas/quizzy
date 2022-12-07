@@ -66,10 +66,10 @@ const Learn: NextPage = () => {
   useEffect(() => {
     if (selectedQuestion?.id && quiz?.id) {
       updateQuiz({
-        ...quiz,
         id: quiz.id,
         studied: quiz.studied ?? 0,
         selectedQuestionId: selectedQuestion.id,
+        title: quiz.title,
       });
     }
   }, [quiz, selectedQuestion?.id, updateQuiz]);
@@ -174,9 +174,10 @@ const Learn: NextPage = () => {
                         await refetch();
                         setSelectedIndex(0);
                         updateQuiz({
-                          ...quiz,
                           studied: (quiz?.studied ?? 0) + 1,
                           selectedQuestionId: filteredQuestions?.[0]?.id,
+                          title: quiz.title,
+                          id: quiz.id,
                         });
                         setIsEnd(false);
                       }}
