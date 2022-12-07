@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import Loading from "../../components/Loading";
 import { EditorWrapper } from "../../EditorWrapper";
-import type { QuizUpdateSchemaType } from "../../server/trpc/router/quiz";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { trpc } from "../../utils/trpc";
 
 type Question = {
@@ -31,7 +31,6 @@ const Home: NextPage = () => {
   const id = (router.query?.quizId as string) || "";
 
   const [enableRefetch, setEnableRefetch] = useState(true);
-  const [lastSubmitted, setLastSubmitted] = useState<QuizUpdateSchemaType>();
 
   const {
     data: quiz,
@@ -49,6 +48,10 @@ const Home: NextPage = () => {
       setEnableRefetch(false);
     }
   }, [enableRefetch, isSuccess]);
+
+  const [storedValue, storeValue] = useLocalStorage("quiz", quiz);
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const { mutateAsync: create, isLoading: isCreateLoading } =
     trpc.question.create.useMutation();
@@ -108,35 +111,45 @@ const Home: NextPage = () => {
   const handleUpdateQuestion = _.debounce(async (index: number) => {
     const values = methods.getValues();
     const question = values.questions[index];
-
-    if (_.isEqual(values, lastSubmitted)) {
-      await updateQuestion({
-        ...question,
-        quizId: id,
-        id: question?.id ?? "",
-      });
-      setLastSubmitted({
-        ...values,
-        studied: quiz?.studied ?? 0,
-        selectedQuestionId: quiz?.selectedQuestionId ?? "",
-        id,
-      });
-    }
+    storeValue(values);
+    await updateQuestion({
+      ...question,
+      quizId: id,
+      id: question?.id ?? "",
+    });
   }, 1000);
 
   const handleUpdateQuiz = _.debounce(async () => {
     const values = methods.getValues();
+    storeValue(values);
     const updateObject = {
       ...values,
       studied: quiz?.studied ?? 0,
       selectedQuestionId: quiz?.selectedQuestionId ?? "",
       id,
     };
-    if (!_.isEqual(updateObject, lastSubmitted)) {
-      await updateQuiz(updateObject);
-      setLastSubmitted(updateObject);
-    }
+    await updateQuiz(updateObject);
   }, 1000);
+
+  const handleSaveEverything = async () => {
+    const promises = [];
+    const res = await handleUpdateQuiz();
+    promises.push(res);
+    fields.forEach(async (field) => {
+      await updateQuestion({
+        ...field,
+        quizId: id,
+        id: field?.id ?? "",
+      });
+      promises.push(res);
+    });
+
+    await Promise.all(promises);
+    setToastMessage("Saved");
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 2000);
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -156,6 +169,9 @@ const Home: NextPage = () => {
             isUpdateQuizLoading ||
             isUpdateQuestionLoading ||
             isDeleteLoading) && <div className="text-gray-800">Saving...</div>}
+          <button className="btn-primary btn" onClick={handleSaveEverything}>
+            Save
+          </button>
         </nav>
 
         <div className="flex min-h-screen flex-col items-center justify-center">
@@ -180,7 +196,6 @@ const Home: NextPage = () => {
                 <input
                   {...register("title", {
                     onBlur: handleUpdateQuiz,
-                    onChange: handleUpdateQuiz,
                   })}
                   className="input-bordered input w-full"
                 />
@@ -251,7 +266,6 @@ const Home: NextPage = () => {
                           <input
                             {...register(`questions.${index}.title` as const, {
                               onBlur: async () => handleUpdateQuestion(index),
-                              onChange: async () => handleUpdateQuestion(index),
                             })}
                             className="input-bordered input-ghost input w-full"
                           />
@@ -265,7 +279,6 @@ const Home: NextPage = () => {
                         <EditorWrapper
                           name={`questions.${index}.answer` as const}
                           onBlur={() => handleUpdateQuestion(index)}
-                          onChange={() => handleUpdateQuestion(index)}
                         />
                       </div>
                     );
@@ -282,6 +295,15 @@ const Home: NextPage = () => {
           </button>
         </div>
       </main>
+      {toastMessage && (
+        <div className="toast-end toast toast-top">
+          <div className="alert alert-success">
+            <div>
+              <span>{toastMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </FormProvider>
   );
 };

@@ -7,7 +7,7 @@ const Editor = dynamic(() => import("./Editor"), { ssr: false });
 interface IEditorWrapperProps {
   name: string;
   onBlur: () => void;
-  onChange: () => void;
+  // onChange: () => void;
 }
 
 const isServer = () => typeof window === `undefined`;
@@ -15,7 +15,7 @@ const isServer = () => typeof window === `undefined`;
 export const EditorWrapper: React.FC<IEditorWrapperProps> = ({
   name,
   onBlur: onBlurValue,
-  onChange: onChangeValue,
+  // onChange: onChangeValue,
 }) => {
   const { control } = useFormContext();
 
@@ -39,7 +39,7 @@ export const EditorWrapper: React.FC<IEditorWrapperProps> = ({
                 console.log("🚀 ~ file: EditorWrapper.tsx ~ line 40 ~ changedValue !== value", changedValue !== value)
                 if (changedValue !== value) {
                   onChange(changedValue);
-                  onChangeValue();
+                  // onChangeValue();
                 }
               }} // send value to hook form
               value={value} // set value from hook form

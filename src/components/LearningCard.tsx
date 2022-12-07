@@ -36,7 +36,7 @@ export function LearningCard({
       ...values,
       quizId: data.quizId as string,
     });
-  },1000);
+  }, 1000);
 
   return (
     <div onClick={() => setShowAnswer(!showAnswer)}>
@@ -88,11 +88,7 @@ export function LearningCard({
                   className="my-auto h-full w-full"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <EditorWrapper
-                    name="answer"
-                    onBlur={handleUpdate}
-                    onChange={handleUpdate}
-                  />
+                  <EditorWrapper name="answer" onBlur={handleUpdate} />
                 </div>
               ) : (
                 <div
