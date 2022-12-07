@@ -30,17 +30,13 @@ export function LearningCard({
     setShowAnswer(false);
   }, [data.id]);
 
-  const handleUpdate = () => {
+  const handleUpdate = _.debounce(() => {
     const values = methods.getValues();
     updateQuestion({
       ...values,
       quizId: data.quizId as string,
     });
-  };
-
-  const updateOnChange = _.debounce(() => {
-    handleUpdate();
-  });
+  },1000);
 
   return (
     <div onClick={() => setShowAnswer(!showAnswer)}>
@@ -92,7 +88,11 @@ export function LearningCard({
                   className="my-auto h-full w-full"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <EditorWrapper name="answer" onBlur={handleUpdate} />
+                  <EditorWrapper
+                    name="answer"
+                    onBlur={handleUpdate}
+                    onChange={handleUpdate}
+                  />
                 </div>
               ) : (
                 <div
