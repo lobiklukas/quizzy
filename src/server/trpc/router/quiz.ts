@@ -47,7 +47,7 @@ export const quizRouter = router({
       let questions = [] as Question[];
       if (input.questions) {
         questions =
-          (await prisma?.$transaction(
+          (await ctx.prisma?.$transaction(
             input.questions.map((question) => {
               return ctx.prisma?.question.update({
                 where: {
