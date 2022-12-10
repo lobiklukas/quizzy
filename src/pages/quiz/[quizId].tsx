@@ -107,20 +107,22 @@ const Home: NextPage = () => {
     const index = fields.findIndex((q) => q.id === id);
     const question = fields[index];
 
+    // add window confirm with text "Are you sure you want to delete this question?"
+    const result = window.confirm(
+      "Are you sure you want to delete this question?"
+    );
+
+    if (!result) return;
+
     if (question) {
       deleteOne({
         id: question.id,
       });
       remove(index);
-      console.log(
-        "🚀 ~ file: [quizId].tsx ~ line 113 ~ handleRemoveQuestion ~ index",
-        index
-      );
-      console.log(fields);
     }
   };
 
-  const handleSave = useCallback(async () => {
+  const handleSaveAll = useCallback(async () => {
     const values = methods.getValues();
     storeValue(values);
 
@@ -143,19 +145,54 @@ const Home: NextPage = () => {
     }
   }, [id, methods, storeValue, updateQuiz]);
 
-  // save every 20 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (lastSubmit) {
-        const diff = new Date().getTime() - lastSubmit.updated.getTime();
-        const values = methods.getValues();
-        if (diff > 20000 && !_.isEqual(values, lastSubmit.values)) {
-          handleSave();
+  const handleSaveQuestion = useCallback(
+    async (questionId: string) => {
+      const index = fields.findIndex((q) => q.id === questionId);
+      const question = methods.getValues(`questions.${index}`);
+      console.log("🚀 ~ file: [quizId].tsx:145 ~ question", question);
+
+      if (question) {
+        const result = await updateQuestion({
+          ...question,
+          id: question.id,
+          quizId: id,
+        });
+        if (result) {
+          setToastMessage("Saved");
+          setTimeout(() => {
+            setToastMessage(null);
+          }, 1000);
         }
       }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [handleSave, lastSubmit, methods]);
+    },
+    [fields, id, methods, updateQuestion]
+  );
+
+  const handleSaveQuiz = useCallback(async () => {
+    const values = methods.getValues();
+    storeValue(values);
+
+    const result = await updateQuiz({
+      id: quiz?.id ?? "",
+      selectedQuestionId: values.selectedQuestionId ?? "",
+      studied: values.studied ?? 0,
+      title: values.title,
+      description: values.description,
+    });
+    if (result) {
+      setLastSubmit({
+        updated: result.updatedAt,
+        values: {
+          ...values,
+          questions: lastSubmit?.values.questions ?? [],
+        },
+      });
+      setToastMessage("Saved");
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 1000);
+    }
+  }, [lastSubmit?.values.questions, methods, storeValue, updateQuiz]);
 
   if (isLoading) {
     return <Loading />;
@@ -185,15 +222,13 @@ const Home: NextPage = () => {
           >
             Load
           </button>
-          <button className="btn-primary btn" onClick={() => handleSave()}>
+          <button className="btn-primary btn" onClick={() => handleSaveAll()}>
             Save
           </button>
         </div>
       </nav>
       <main className="container mx-auto mt-12 flex flex-col items-center justify-center">
-        <div className="overflow-x-auto">
-
-        </div>
+        <div className="overflow-x-auto"></div>
         <div className="flex min-h-screen flex-col items-center justify-center">
           {quiz && (
             <div
@@ -214,7 +249,9 @@ const Home: NextPage = () => {
                   <span className="label-text">Title</span>
                 </label>
                 <input
-                  {...register("title", {})}
+                  {...register("title", {
+                    onBlur: handleSaveQuiz,
+                  })}
                   className="input-bordered input w-full"
                 />
               </div>
@@ -223,7 +260,9 @@ const Home: NextPage = () => {
                   <span className="label-text">Description</span>
                 </label>
                 <input
-                  {...register("description")}
+                  {...register("description", {
+                    onBlur: handleSaveQuiz,
+                  })}
                   className="input-bordered input w-full"
                 />
               </div>
@@ -275,21 +314,17 @@ const Home: NextPage = () => {
                           />
                           .
                           <input
-                            {...register(`questions.${index}.id` as const, {})}
+                            {...register(`questions.${index}.id` as const)}
                             type="hidden"
                           />
                           <input
-                            {...register(
-                              `questions.${index}.quizId` as const,
-                              {}
-                            )}
+                            {...register(`questions.${index}.quizId` as const)}
                             type="hidden"
                           />
                           <input
-                            {...register(
-                              `questions.${index}.title` as const,
-                              {}
-                            )}
+                            {...register(`questions.${index}.title` as const, {
+                              onBlur: () => handleSaveQuestion(question.id),
+                            })}
                             className="input-bordered input-ghost input w-full"
                           />
                           <button
@@ -301,6 +336,7 @@ const Home: NextPage = () => {
                         </div>
                         <EditorWrapper
                           name={`questions.${index}.answer` as const}
+                          onBlur={() => handleSaveQuestion(question.id)}
                         />
                       </div>
                     );

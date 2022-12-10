@@ -11,6 +11,7 @@ import clsx from "clsx";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useMemo, useState } from "react";
+import CreateFolderModal from "../components/CreateFolderModal";
 import Folder from "../components/Folder";
 import FolderView from "../components/FolderView";
 import Loading from "../components/Loading";
@@ -20,13 +21,14 @@ import { useModalStore } from "../store/modalStore";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
+  const openModal = useModalStore((state) => state.openModal);
   const [activeId, setActiveId] = useState<string | null>();
   const [folder, setFolder] = useState<string | null>();
 
   const utils = trpc.useContext();
 
   const { data, isLoading, refetch } = trpc.quiz.getAll.useQuery({
-    includeInFolder: false,
+    includeInFolder: true,
   });
   const {
     data: folders,
@@ -63,7 +65,6 @@ const Home: NextPage = () => {
   });
   const { mutate: moveToFolder } = trpc.folder.moveToFolder.useMutation({
     onMutate: async (quiz) => {
-      utils.quiz.getAll.cancel();
       utils.folder.getAll.cancel();
       const previousFolders = utils.folder.getAll.getData();
       const previousQuizes = utils.quiz.getAll.getData({
@@ -78,10 +79,6 @@ const Home: NextPage = () => {
 
       if (!updatedFolder || !updatedQuiz) return;
 
-      utils.quiz.getAll.setData({ includeInFolder: false }, (old) => {
-        return old?.filter((q) => q.id !== updatedQuiz.id);
-      });
-
       utils.folder.getAll.setData(undefined, (old) => {
         return old?.map((folder) => {
           if (folder.id === updatedFolder.id) {
@@ -94,14 +91,10 @@ const Home: NextPage = () => {
         });
       });
 
-      return { previousFolders, previousQuizes };
+      return { previousFolders };
     },
     onError: (err, newTodo, context) => {
       utils.folder.getAll.setData(undefined, context?.previousFolders);
-      utils.quiz.getAll.setData(
-        { includeInFolder: false },
-        context?.previousQuizes
-      );
     },
     onSettled: async () => {
       await refetch();
@@ -110,12 +103,8 @@ const Home: NextPage = () => {
   });
   const { mutate: moveFromFolder } = trpc.folder.moveFromFolder.useMutation({
     onMutate: async (quiz) => {
-      utils.quiz.getAll.cancel();
+      utils.folder.getAll.cancel();
       const previousFolders = utils.folder.getAll.getData();
-
-      const previousQuizes = utils.quiz.getAll.getData({
-        includeInFolder: false,
-      });
 
       const updatedFolder = previousFolders?.find(
         (folder) => folder.id === quiz.folderId
@@ -139,19 +128,10 @@ const Home: NextPage = () => {
         });
       });
 
-      utils.quiz.getAll.setData({ includeInFolder: false }, (old) => {
-        if (!old?.length) return [updatedQuiz];
-        return [...old, updatedQuiz];
-      });
-
-      return { previousFolders, previousQuizes };
+      return { previousFolders };
     },
     onError: (err, newTodo, context) => {
       utils.folder.getAll.setData(undefined, context?.previousFolders);
-      utils.quiz.getAll.setData(
-        { includeInFolder: false },
-        context?.previousQuizes
-      );
     },
     onSettled: async () => {
       await refetch();
@@ -164,7 +144,7 @@ const Home: NextPage = () => {
       const previousQuizes = utils.quiz.getAll.getData();
 
       utils.quiz.getAll.setData({ includeInFolder: false }, (old) => {
-        const newFolder = {
+        const newQuiz = {
           ...quiz,
           id: "customId",
           description: quiz.description || "",
@@ -175,8 +155,8 @@ const Home: NextPage = () => {
           studied: 0,
           folderId: null,
         };
-        if (!old?.length) return [newFolder];
-        return [...old, newFolder];
+        if (!old?.length) return [newQuiz];
+        return [...old, newQuiz];
       });
 
       return { previousQuizes };
@@ -191,27 +171,40 @@ const Home: NextPage = () => {
       await refetch();
     },
   });
-  const { mutate: deleteQuiz } = trpc.quiz.deleteOne.useMutation({
-    onMutate: async (deletedQuiz) => {
-      utils.quiz.getAll.cancel();
-      const previousQuizes = utils.quiz.getAll.getData();
+  const { mutate: deleteQuiz, isLoading: isDeleting } =
+    trpc.quiz.deleteOne.useMutation({
+      onMutate: async (deletedQuiz) => {
+        utils.quiz.getAll.cancel();
+        utils.folder.getAll.cancel();
+        const previousQuizes = utils.quiz.getAll.getData();
+        const previousFolders = utils.folder.getAll.getData();
 
-      utils.quiz.getAll.setData({ includeInFolder: false }, (old) => {
-        return old?.filter((f) => f.id !== deletedQuiz.id);
-      });
+        utils.quiz.getAll.setData({ includeInFolder: false }, (old) => {
+          return old?.filter((f) => f.id !== deletedQuiz.id);
+        });
 
-      return { previousQuizes };
-    },
-    onError: (err, newTodo, context) => {
-      utils.quiz.getAll.setData(
-        { includeInFolder: false },
-        context?.previousQuizes
-      );
-    },
-    onSettled: async () => {
-      await refetch();
-    },
-  });
+        utils.folder.getAll.setData(undefined, (old) => {
+          return old?.map((folder) => {
+            return {
+              ...folder,
+              quizes: folder.quizes.filter((q) => q.id !== deletedQuiz.id),
+            };
+          });
+        });
+
+        return { previousQuizes, previousFolders };
+      },
+      onError: (err, newTodo, context) => {
+        utils.quiz.getAll.setData(
+          { includeInFolder: false },
+          context?.previousQuizes
+        );
+        utils.folder.getAll.setData(undefined, context?.previousFolders);
+      },
+      onSettled: async () => {
+        await refetch();
+      },
+    });
   const { mutate: deleteFolder } = trpc.folder.deleteOne.useMutation({
     onMutate: async (folder) => {
       utils.folder.getAll.cancel();
@@ -238,7 +231,25 @@ const Home: NextPage = () => {
     });
   };
 
-  const createNewFolder = async (title: string) => {
+  const handleDeleteQuiz = async (id: string) => {
+    deleteQuiz({
+      id,
+    });
+    setTimeout(() => setActiveId(null), 100);
+  };
+
+  const displayDeleteModal = (id: string, title: string) => {
+    openModal({
+      onConfirm: () => handleDeleteQuiz(id),
+      modal: {
+        title: `Delete quiz "${title}"?`,
+      },
+    });
+  };
+
+  const createNewFolder = async (title?: string) => {
+    if (!title) return;
+
     createFolder({
       title,
     });
@@ -257,10 +268,9 @@ const Home: NextPage = () => {
   };
 
   const handleDragStart = (event: any) => {
+    if (isDeleting) return;
     setActiveId(event.active.id);
   };
-
-  const openModal = useModalStore((state) => state.openModal);
 
   const selectedFolder = useMemo(
     () => folders?.find((f) => f.id === folder),
@@ -292,7 +302,7 @@ const Home: NextPage = () => {
             id={selectedFolder.id}
             title={selectedFolder.title}
             quizes={selectedFolder.quizes}
-            deleteQuiz={(id) => deleteQuiz({ id })}
+            deleteQuiz={(id, title) => displayDeleteModal(id, title)}
             closeFolder={() => setFolder(null)}
             moveFromFolder={(quizId: string) => {
               moveFromFolder({
@@ -310,7 +320,16 @@ const Home: NextPage = () => {
             <div className="flex justify-between">
               <h1 className="text-4xl font-bold">Folders</h1>
               <button
-                onClick={() => openModal({ onConfirm: createNewFolder })}
+                onClick={() =>
+                  openModal({
+                    onConfirm: createNewFolder,
+                    modal: {
+                      title: "Create new folder",
+                      content: <CreateFolderModal />,
+                      showActions: false,
+                    },
+                  })
+                }
                 className="btn-secondary btn-circle btn"
               >
                 <FolderPlusIcon className="h-6 w-6" />
@@ -353,7 +372,7 @@ const Home: NextPage = () => {
                   <PreviewCard
                     key={quiz.id}
                     {...quiz}
-                    onDelete={(id) => deleteQuiz({ id })}
+                    onDelete={(id) => displayDeleteModal(id, quiz.title)}
                     isDragging={activeId === quiz.id}
                   />
                 ))}

@@ -11,15 +11,17 @@ export default function Modal() {
     modal: state.modal,
   }));
 
-  const { title, content, showActions = true, confirmText } = modal;
+  const [title, setTitle] = React.useState("");
 
   const handleConfirm = () => {
     closeModal();
-    onConfirm();
+    onConfirm(title);
+    setTitle("");
   };
 
   const handleClose = () => {
     closeModal();
+    setTitle("");
   };
 
   return (
@@ -53,27 +55,24 @@ export default function Modal() {
                   as="h3"
                   className="text-center text-lg font-medium leading-6 text-gray-900"
                 >
-                  {title}
+                  Are you sure?
                 </Dialog.Title>
-                {content}
-                {showActions && (
-                  <div className="mt-4 flex justify-center gap-2">
-                    <button
-                      type="button"
-                      className="btn-secondary btn"
-                      onClick={handleClose}
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-primary btn"
-                      onClick={handleConfirm}
-                    >
-                      {confirmText || "Confirm"}
-                    </button>
-                  </div>
-                )}
+                <div className="mt-4 flex justify-center gap-2">
+                  <button
+                    type="button"
+                    className="btn-secondary btn"
+                    onClick={handleClose}
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-error btn"
+                    onClick={handleConfirm}
+                  >
+                    Delete
+                  </button>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

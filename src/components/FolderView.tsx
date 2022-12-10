@@ -11,7 +11,7 @@ export interface IFolderViewProps {
   quizes: (Quiz & {
     questions: Question[];
   })[];
-  deleteQuiz: (id: string) => void;
+  deleteQuiz: (id: string, title: string) => void;
   closeFolder: () => void;
   moveFromFolder: (id: string) => void;
 }
@@ -67,7 +67,7 @@ export default function FolderView({
               <PreviewCard
                 key={quiz.id}
                 {...quiz}
-                onDelete={deleteQuiz}
+                onDelete={()=>deleteQuiz(quiz.id, quiz.title)}
                 isDragging={activeId === quiz.id}
               />
             ))}

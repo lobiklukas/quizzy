@@ -21,7 +21,6 @@ export const QuestionUpdateSchema = z.object({
 
 export type QuizUpdateSchemaType = z.infer<typeof QuestionUpdateSchema>;
 
-
 export const questionRouter = router({
   create: publicProcedure
     .input(QuestionCreateSchema)
@@ -34,8 +33,8 @@ export const questionRouter = router({
     }),
   update: publicProcedure
     .input(QuestionUpdateSchema)
-    .mutation(({ input, ctx }) => {
-      return ctx.prisma?.question.update({
+    .mutation(async ({ input, ctx }) => {
+      const result = await ctx.prisma?.question.update({
         where: {
           id: input.id,
         },
@@ -43,6 +42,15 @@ export const questionRouter = router({
           ...input,
         },
       });
+
+      const quiz = await ctx.prisma?.quiz.findUnique({
+        where: {
+          id: input.quizId ?? "",
+        },
+      });
+      console.log("🚀 ~ file: question.ts:51 ~ .mutation ~ quiz", quiz);
+
+      return result;
     }),
   unLearn: publicProcedure
     .input(z.object({ quizId: z.string() }))

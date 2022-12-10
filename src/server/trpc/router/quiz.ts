@@ -90,7 +90,7 @@ export const quizRouter = router({
         where: input.includeInFolder ? {} : { folderId: null },
 
         orderBy: {
-          createdAt: "desc",
+          updatedAt: "desc",
         },
       });
     }),
