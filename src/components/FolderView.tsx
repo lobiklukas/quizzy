@@ -1,4 +1,4 @@
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { FolderIcon } from "@heroicons/react/24/solid";
 import type { Question, Quiz } from "@prisma/client";
 import { useState } from "react";
@@ -38,8 +38,17 @@ export default function FolderView({
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id);
   };
+
+    const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: {
+          distance: 8,
+        },
+      })
+    );
+
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
       <div key={id}>
         <button className="btn-primary btn my-2" onClick={closeFolder}>
           Back
