@@ -3,7 +3,7 @@ import {
   DragOverlay,
   PointerSensor,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { FolderPlusIcon } from "@heroicons/react/24/solid";
@@ -245,7 +245,6 @@ const Home: NextPage = () => {
   };
 
   const handleDragEnd = (event: any) => {
-    console.log("🚀 ~ file: index.tsx:53 ~ handleDragEnd ~ event", event);
     const { active, over } = event;
 
     if (active?.id && over?.id) {
@@ -348,7 +347,7 @@ const Home: NextPage = () => {
                 <PlusIcon className="h-6 w-6" />
               </button>
             </div>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4 p-4">
               {data &&
                 data.map((quiz) => (
                   <PreviewCard

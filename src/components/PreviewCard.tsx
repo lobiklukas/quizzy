@@ -40,6 +40,7 @@ export default function PreviewCard({
           {title}
           <button
             className="btn-secondary btn"
+            disabled={id === "customId"}
             onMouseDown={(e) => {
               e.preventDefault();
               e.stopPropagation();

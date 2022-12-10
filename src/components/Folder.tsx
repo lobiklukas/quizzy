@@ -40,13 +40,12 @@ export default function Folder({
         </span>
         <h2 className="card-title flex justify-between">
           <div className="flex items-center">
-            <span className="mr-2 h-8 w-8">
-              <FolderIcon />
-            </span>
+            <FolderIcon className="mr-2 h-8 w-8 text-slate-500" />
             {title}
           </div>
           <button
-            className="btn-link btn"
+            className="btn-secondary btn-circle btn ml-4"
+            disabled={id === "customId"}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
