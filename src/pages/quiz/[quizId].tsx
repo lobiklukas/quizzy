@@ -191,6 +191,9 @@ const Home: NextPage = () => {
         </div>
       </nav>
       <main className="container mx-auto mt-12 flex flex-col items-center justify-center">
+        <div className="overflow-x-auto">
+
+        </div>
         <div className="flex min-h-screen flex-col items-center justify-center">
           {quiz && (
             <div

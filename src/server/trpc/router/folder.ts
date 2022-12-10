@@ -5,12 +5,12 @@ import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 import { QuestionUpdateSchema } from "./question";
 
-export const QuizCreateSchema = z.object({
+export const FolderCreateSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
 });
 
-export const QuizUpdateSchema = z.object({
+export const FolderUpdateSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string().optional(),
@@ -19,24 +19,59 @@ export const QuizUpdateSchema = z.object({
   questions: QuestionUpdateSchema.array().optional(),
 });
 
-// Create type for QuizUpdateSchema
-export type QuizUpdateSchemaType = z.infer<
-  typeof QuizUpdateSchema & { questions: QuizUpdateSchemaType[] }
->;
-
-export const quizRouter = router({
-  create: publicProcedure.input(QuizCreateSchema).mutation(({ input, ctx }) => {
-    return ctx.prisma.quiz.create({
-      data: {
-        title: input.title,
-        description: input.description ?? "",
-      },
-    });
-  }),
-  update: publicProcedure
-    .input(QuizUpdateSchema)
+export const folderRouter = router({
+  create: publicProcedure
+    .input(FolderCreateSchema)
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.folder.create({
+        data: {
+          title: input.title,
+        },
+      });
+    }),
+  moveToFolder: publicProcedure
+    .input(
+      z.object({
+        folderId: z.string(),
+        quizId: z.string(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
-      const quiz = await ctx.prisma?.quiz.update({
+      const question = await ctx.prisma.quiz.update({
+        where: {
+          id: input.quizId,
+        },
+        data: {
+          folderId: input.folderId,
+        },
+      });
+
+      return question;
+    }),
+  moveFromFolder: publicProcedure
+    .input(
+      z.object({
+        folderId: z.string(),
+        quizId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const question = await ctx.prisma.quiz.update({
+        where: {
+          id: input.quizId,
+        },
+        data: {
+          folderId: null,
+        },
+      });
+
+      return question;
+    }),
+
+  update: publicProcedure
+    .input(FolderUpdateSchema)
+    .mutation(async ({ input, ctx }) => {
+      const quiz = await ctx.prisma?.folder.update({
         where: {
           id: input.id,
         },
@@ -66,34 +101,27 @@ export const quizRouter = router({
   deleteOne: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input, ctx }) => {
-      return ctx.prisma?.quiz.delete({
+      return ctx.prisma?.folder.delete({
         where: {
           id: input.id,
         },
       });
     }),
-  getAll: publicProcedure
-    .input(
-      z.object({
-        includeInFolder: z.boolean().optional(),
-      })
-    )
-    .query(({ input, ctx }) => {
-      return ctx.prisma.quiz.findMany({
-        include: {
-          questions: {
-            orderBy: {
-              order: "asc",
-            },
+  getAll: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.folder.findMany({
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        updatedAt: true,
+        quizes: {
+          include: {
+            questions: true,
           },
         },
-        where: input.includeInFolder ? {} : { folderId: null },
-
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-    }),
+      },
+    });
+  }),
   findOne: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {

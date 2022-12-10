@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { router, publicProcedure } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 
 const QuestionCreateSchema = z.object({
   title: z.string(),
