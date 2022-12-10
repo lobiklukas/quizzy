@@ -110,8 +110,12 @@ const Learn: NextPage = () => {
     handleNext();
   };
 
+  console.log(
+    "🚀 ~ file: [quizId].tsx:264 ~ filteredQuestions.length",
+    !isEnd || filteredQuestions.length
+  );
   return (
-    <main className="container  mx-auto min-h-screen">
+    <main className="container mx-auto min-h-screen">
       <nav className="mb-auto flex w-full items-center justify-between p-4 px-16">
         <Link
           href="/"
@@ -120,7 +124,6 @@ const Learn: NextPage = () => {
           Back
         </Link>
       </nav>
-
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
         {!!filteredQuestions.length && (
           <>
@@ -201,29 +204,26 @@ const Learn: NextPage = () => {
           </>
         )}
       </div>
-
-      {!isEnd ||
-        (filteredQuestions.length && (
-          <nav className="mt-auto flex items-center justify-center gap-4 p-4 px-16">
-            <button
-              onClick={handlePrevious}
-              disabled={selectedIndex === 0}
-              className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
-            >
-              <ArrowLeftIcon className="h-6 w-6" />
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={
-                selectedIndex === quiz?.questions?.length || !filteredQuestions
-              }
-              className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
-            >
-              <ArrowRightIcon className="h-6 w-6" />
-            </button>
-          </nav>
-        ))}
-
+      {(!isEnd || filteredQuestions.length) && (
+        <nav className="flex items-center justify-center gap-4 p-4 px-16">
+          <button
+            onClick={handlePrevious}
+            disabled={selectedIndex === 0}
+            className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
+          >
+            <ArrowLeftIcon className="h-6 w-6" />
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={
+              selectedIndex === quiz?.questions?.length || !filteredQuestions
+            }
+            className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
+          >
+            <ArrowRightIcon className="h-6 w-6" />
+          </button>
+        </nav>
+      )}
       {!filteredQuestions.length && (
         <div className="flex flex-col items-center justify-center gap-4 p-4 px-16">
           <div className="rotate-12">
