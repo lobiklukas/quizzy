@@ -313,6 +313,15 @@ const Home: NextPage = () => {
                               key={question.id + index}
                               defaultValue={index + 1}
                               type="number"
+                              onChange={(e) => {
+                                const value = Number(e.target.value);
+                                if (value > fields.length) {
+                                  e.target.value = fields.length.toString();
+                                }
+                                if (value < 0) {
+                                  e.target.value = "1";
+                                }
+                              }}
                               onBlur={async (e) => {
                                 const value = Number(e.target.value);
                                 if (
@@ -320,21 +329,6 @@ const Home: NextPage = () => {
                                   value >= 1 &&
                                   value !== index + 1
                                 ) {
-                                  await updateQuestion({
-                                    ...question,
-                                    title: question.title ?? "",
-                                    answer: question.answer ?? "",
-                                    quizId: id,
-                                    order: Number(value),
-                                  });
-                                  const secondQuestion = fields[value - 1];
-                                  await updateQuestion({
-                                    id: secondQuestion?.id ?? "",
-                                    title: secondQuestion?.title ?? "",
-                                    answer: secondQuestion?.answer ?? "",
-                                    quizId: id,
-                                    order: index + 1,
-                                  });
                                   move(index, Number(value) - 1);
                                 }
                               }}
