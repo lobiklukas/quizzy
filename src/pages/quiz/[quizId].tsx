@@ -1,6 +1,5 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import _ from "lodash";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -85,34 +84,56 @@ const Home: NextPage = () => {
     }
   }, [quiz, methods.reset, methods]);
 
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, append, remove, move, insert, prepend } = useFieldArray({
     name: "questions",
     control: methods.control,
     keyName: "cid",
   });
 
-  const handleAddQuestion = async () => {
+  const handleAddQuestion = async (order?: number) => {
+    // if (order == 0) order = 1;
+    console.log(
+      "🚀 ~ file: [quizId].tsx:95 ~ handleAddQuestion ~ order",
+      order
+    );
+
     const result = await create({
       quizId: id,
       title: "",
       answer: "",
-      order: fields.length + 1,
+      order: order ?? fields.length + 1,
     });
     if (result) {
-      append({ ...result, id: result.id.toString() });
+      const question = { ...result, id: result.id.toString() };
+      if (order) {
+        return insert(order, question);
+      } else if (order === 0) {
+        return prepend(question);
+      }
+
+      return append(question);
     }
   };
+
+  useEffect(() => {
+    console.log(
+      "🚀 ~ file: [quizId].tsx:126 ~ fields.forEach ~ fields",
+      fields
+    );
+    // fix orderIds based on fields index
+    fields.forEach((q, index) => {
+      if (q.order !== index + 1) {
+        updateQuestion({
+          id: q.id,
+          order: index + 1,
+        });
+      }
+    });
+  }, [fields, updateQuestion]);
 
   const handleRemoveQuestion = async (id: string) => {
     const index = fields.findIndex((q) => q.id === id);
     const question = fields[index];
-
-    // add window confirm with text "Are you sure you want to delete this question?"
-    const result = window.confirm(
-      "Are you sure you want to delete this question?"
-    );
-
-    if (!result) return;
 
     if (question) {
       deleteOne({
@@ -192,7 +213,7 @@ const Home: NextPage = () => {
         setToastMessage(null);
       }, 1000);
     }
-  }, [lastSubmit?.values.questions, methods, storeValue, updateQuiz]);
+  }, [lastSubmit?.values.questions, methods, quiz?.id, storeValue, updateQuiz]);
 
   if (isLoading) {
     return <Loading />;
@@ -271,74 +292,87 @@ const Home: NextPage = () => {
                   <h2 className="text-3xl ">Questions</h2>
                   Number of questions:{fields.length}
                 </div>
-                <div className="mt-4 flex flex-col gap-8">
+                <div className="mt-8 flex flex-col gap-8">
                   {fields.map((question, index) => {
                     return (
-                      <div
-                        key={question.id}
-                        className="card flex max-w-[800px] flex-col items-center justify-center gap-2 bg-base-100 p-8 shadow-xl"
-                      >
-                        <div className="flex w-full items-center gap-x-2">
-                          <input
-                            minLength={1}
-                            maxLength={fields.length}
-                            key={question.id + index}
-                            defaultValue={index + 1}
-                            type="number"
-                            onBlur={async (e) => {
-                              const value = Number(e.target.value);
-                              if (
-                                value <= fields.length &&
-                                value >= 1 &&
-                                value !== index + 1
-                              ) {
-                                await updateQuestion({
-                                  ...question,
-                                  title: question.title ?? "",
-                                  answer: question.answer ?? "",
-                                  quizId: id,
-                                  order: Number(value),
-                                });
-                                const secondQuestion = fields[value - 1];
-                                await updateQuestion({
-                                  id: secondQuestion?.id ?? "",
-                                  title: secondQuestion?.title ?? "",
-                                  answer: secondQuestion?.answer ?? "",
-                                  quizId: id,
-                                  order: index + 1,
-                                });
-                                move(index, Number(value) - 1);
-                              }
-                            }}
-                            className="input-ghost input w-24"
+                      <>
+                        <button
+                          className="btn-outline btn-primary btn-sm btn-circle btn mx-auto"
+                          onClick={() => handleAddQuestion(index)}
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                        </button>
+                        <div
+                          key={question.id}
+                          className="card flex max-w-[800px] flex-col items-center justify-center gap-2 bg-base-100 p-8 shadow-xl"
+                        >
+                          <div className="flex w-full items-center gap-x-2">
+                            <input
+                              minLength={1}
+                              maxLength={fields.length}
+                              key={question.id + index}
+                              defaultValue={index + 1}
+                              type="number"
+                              onBlur={async (e) => {
+                                const value = Number(e.target.value);
+                                if (
+                                  value <= fields.length &&
+                                  value >= 1 &&
+                                  value !== index + 1
+                                ) {
+                                  await updateQuestion({
+                                    ...question,
+                                    title: question.title ?? "",
+                                    answer: question.answer ?? "",
+                                    quizId: id,
+                                    order: Number(value),
+                                  });
+                                  const secondQuestion = fields[value - 1];
+                                  await updateQuestion({
+                                    id: secondQuestion?.id ?? "",
+                                    title: secondQuestion?.title ?? "",
+                                    answer: secondQuestion?.answer ?? "",
+                                    quizId: id,
+                                    order: index + 1,
+                                  });
+                                  move(index, Number(value) - 1);
+                                }
+                              }}
+                              className="input-ghost input w-24"
+                            />
+                            .
+                            <input
+                              {...register(`questions.${index}.id` as const)}
+                              type="hidden"
+                            />
+                            <input
+                              {...register(
+                                `questions.${index}.quizId` as const
+                              )}
+                              type="hidden"
+                            />
+                            <input
+                              {...register(
+                                `questions.${index}.title` as const,
+                                {
+                                  onBlur: () => handleSaveQuestion(question.id),
+                                }
+                              )}
+                              className="input-bordered input-ghost input w-full"
+                            />
+                            <button
+                              onClick={() => handleRemoveQuestion(question.id)}
+                              className="btn-secondary btn-square btn"
+                            >
+                              <TrashIcon className="h-6 w-6" />
+                            </button>
+                          </div>
+                          <EditorWrapper
+                            name={`questions.${index}.answer` as const}
+                            onBlur={() => handleSaveQuestion(question.id)}
                           />
-                          .
-                          <input
-                            {...register(`questions.${index}.id` as const)}
-                            type="hidden"
-                          />
-                          <input
-                            {...register(`questions.${index}.quizId` as const)}
-                            type="hidden"
-                          />
-                          <input
-                            {...register(`questions.${index}.title` as const, {
-                              onBlur: () => handleSaveQuestion(question.id),
-                            })}
-                            className="input-bordered input-ghost input w-full"
-                          />
-                          <button
-                            onClick={() => handleRemoveQuestion(question.id)}
-                            className="btn-secondary btn-square btn"
-                          >
-                            <TrashIcon className="h-6 w-6" />
-                          </button>
                         </div>
-                        <EditorWrapper
-                          name={`questions.${index}.answer` as const}
-                          onBlur={() => handleSaveQuestion(question.id)}
-                        />
-                      </div>
+                      </>
                     );
                   })}
                 </div>
@@ -346,10 +380,10 @@ const Home: NextPage = () => {
             </div>
           )}
           <button
-            className="btn-outline btn-primary btn-circle btn my-8"
-            onClick={handleAddQuestion}
+            className="btn-outline btn-primary btn-sm btn-circle btn mx-auto my-8"
+            onClick={() => handleAddQuestion()}
           >
-            <PlusIcon className="h-6 w-6" />
+            <PlusIcon className="h-4 w-4" />
           </button>
         </div>
       </main>

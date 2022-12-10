@@ -43,13 +43,6 @@ export const questionRouter = router({
         },
       });
 
-      const quiz = await ctx.prisma?.quiz.findUnique({
-        where: {
-          id: input.quizId ?? "",
-        },
-      });
-      console.log("🚀 ~ file: question.ts:51 ~ .mutation ~ quiz", quiz);
-
       return result;
     }),
   unLearn: publicProcedure
