@@ -2,8 +2,8 @@ import * as React from "react";
 
 const Loading: React.FC = () => {
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="animate-spin">
+    <div className="flex h-screen items-center justify-center bg-base-200">
+      <div className="animate-spin text-primary">
         <svg
           version="1.0"
           xmlns="http://www.w3.org/2000/svg"
@@ -11,7 +11,7 @@ const Loading: React.FC = () => {
           height="796.000000pt"
           viewBox="0 0 1280.000000 796.000000"
           preserveAspectRatio="xMidYMid meet"
-          className="color-red-500 h-12 w-12 fill-red-500"
+          className="h-12 w-12"
         >
           <metadata>
             Created by potrace 1.15, written by Peter Selinger 2001-2017
@@ -19,7 +19,6 @@ const Loading: React.FC = () => {
           <g
             transform="translate(0.000000,796.000000) scale(0.100000,-0.100000)"
             fill="currentColor"
-            stroke="none"
           >
             <path
               d="M4892 7949 c-510 -32 -1026 -194 -1438 -451 -743 -463 -1255 -1223
