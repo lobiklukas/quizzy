@@ -9,6 +9,7 @@ import Loading from "../../components/Loading";
 import { EditorWrapper } from "../../EditorWrapper";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { trpc } from "../../utils/trpc";
+import { ThemeSwitch } from "../../components/ThemeSwitch";
 
 type Question = {
   id: number;
@@ -221,8 +222,8 @@ const Home: NextPage = () => {
 
   return (
     <FormProvider {...methods}>
-      <nav className="sticky top-0 z-50 flex w-full items-center justify-between border-b-2 bg-white p-4 px-16">
-        <Link href="/" className=" font-bold text-gray-800 hover:text-gray-700">
+      <nav className="bg-content-base sticky top-0 z-10 flex w-full items-center justify-between border-b-2 border-neutral p-4 px-16">
+        <Link href="/" className="btn-ghost btn">
           Back
         </Link>
         <div className="flex items-center gap-2">
@@ -230,7 +231,7 @@ const Home: NextPage = () => {
           isUpdateQuizLoading ||
           isUpdateQuestionLoading ||
           isDeleteLoading ? (
-            <div className="text-gray-800">Saving...</div>
+            <div className="text-base">Saving...</div>
           ) : (
             <span>
               Naposledy uloženo:{" "}
@@ -246,6 +247,7 @@ const Home: NextPage = () => {
           <button className="btn-primary btn" onClick={() => handleSaveAll()}>
             Save
           </button>
+          <ThemeSwitch />
         </div>
       </nav>
       <main className="container mx-auto mt-12 flex flex-col items-center justify-center">

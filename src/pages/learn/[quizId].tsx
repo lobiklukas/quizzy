@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LearningCard } from "../../components/LearningCard";
 import Loading from "../../components/Loading";
 import { trpc } from "../../utils/trpc";
+import { ThemeSwitch } from "../../components/ThemeSwitch";
 
 const Learn: NextPage = () => {
   const router = useRouter();
@@ -120,12 +121,10 @@ const Learn: NextPage = () => {
   return (
     <main className="container mx-auto min-h-screen">
       <nav className="mb-auto flex w-full items-center justify-between p-4 px-16">
-        <Link
-          href="/"
-          className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
-        >
+        <Link href="/" className="btn-primary btn font-bold">
           Back
         </Link>
+        <ThemeSwitch />
       </nav>
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
         {!!filteredQuestions.length && (
@@ -212,7 +211,7 @@ const Learn: NextPage = () => {
           <button
             onClick={handlePrevious}
             disabled={selectedIndex === 0}
-            className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
+            className="btn-primary btn font-bold"
           >
             <ArrowLeftIcon className="h-6 w-6" />
           </button>
@@ -221,7 +220,7 @@ const Learn: NextPage = () => {
             disabled={
               selectedIndex === quiz?.questions?.length || !filteredQuestions
             }
-            className="btn-primary btn font-bold text-gray-800 hover:text-gray-700"
+            className="btn-primary btn font-bold"
           >
             <ArrowRightIcon className="h-6 w-6" />
           </button>

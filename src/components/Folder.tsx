@@ -40,7 +40,7 @@ export default function Folder({
         </span>
         <h2 className="card-title flex justify-between">
           <div className="flex items-center">
-            <FolderIcon className="mr-2 h-8 w-8 text-slate-500" />
+            <FolderIcon className="mr-2 h-8 w-8 text-info-content" />
             {title}
           </div>
           <button
