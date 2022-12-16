@@ -347,7 +347,7 @@ const Home: NextPage = () => {
                 <div
                   className={clsx(
                     "flex flex-wrap items-center gap-4 p-4 transition-all duration-300 ease-in-out",
-                    activeId && "rounded-md bg-slate-100"
+                    activeId && "rounded-md bg-base-300"
                   )}
                 >
                   {folders?.length ? (
