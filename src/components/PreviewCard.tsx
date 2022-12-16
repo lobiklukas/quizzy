@@ -30,7 +30,7 @@ export default function PreviewCard({
       {...attributes}
       key={id}
       className={clsx(
-        "card w-96 bg-base-100 shadow-xl",
+        "card min-h-[200px] w-96 bg-base-100 shadow-xl",
         isDragging && "opacity-50",
         isOverlay && "border-2 border-accent"
       )}
