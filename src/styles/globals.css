@@ -5,3 +5,18 @@
 html {
   @apply bg-base-200 !important;
 }
+
+.ql-toolbar .ql-stroke {
+  fill: none;
+  stroke: #fff;
+  @apply stroke-base-content !important;
+}
+
+.ql-toolbar .ql-fill {
+  stroke: none;
+  @apply fill-base-content !important;
+}
+
+.ql-toolbar .ql-picker {
+  @apply text-base-content !important;
+}

@@ -9,10 +9,7 @@ export function ThemeSwitch() {
 
   return (
     <div title="Change Theme" className="dropdown-end dropdown">
-      <div
-        tabIndex={0}
-        className="btn-outline btn-secondary btn gap-1 normal-case"
-      >
+      <div tabIndex={0} className="btn-secondary btn gap-1 normal-case">
         <svg
           width="20"
           height="20"

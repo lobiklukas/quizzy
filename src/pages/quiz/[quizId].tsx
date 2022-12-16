@@ -222,7 +222,7 @@ const Home: NextPage = () => {
 
   return (
     <FormProvider {...methods}>
-      <nav className="bg-content-base sticky top-0 z-10 flex w-full items-center justify-between border-b-2 border-neutral p-4 px-16">
+      <nav className="sticky top-0 z-10 flex w-full items-center justify-between border-b-2 border-neutral bg-base-300 p-4 px-16">
         <Link href="/" className="btn-ghost btn">
           Back
         </Link>
