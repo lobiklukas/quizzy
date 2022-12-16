@@ -36,7 +36,11 @@ const Learn: NextPage = () => {
   );
 
   useEffect(() => {
-    if (filteredQuestions.length === 0 && audio && audio.paused) {
+    console.log(
+      "🚀 ~ file: [quizId].tsx:40 ~ useEffect ~ filteredQuestions",
+      filteredQuestions
+    );
+    if (!isLoading && filteredQuestions.length === 0 && audio && audio.paused) {
       audio?.play();
       audio.loop = true;
     } else {
@@ -55,11 +59,10 @@ const Learn: NextPage = () => {
 
   useEffect(() => {
     if (quiz && selectedIndex === undefined) {
-      setSelectedIndex(
-        filteredQuestions?.findIndex(
-          (question) => question.id === quiz.selectedQuestionId
-        )
+      const foundIndex = filteredQuestions?.findIndex(
+        (question) => question.id === quiz.selectedQuestionId
       );
+      setSelectedIndex(foundIndex !== -1 ? foundIndex : 0);
     }
   }, [filteredQuestions, quiz, selectedIndex]);
 

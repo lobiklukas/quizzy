@@ -102,7 +102,8 @@ export function LearningCard({
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    handleLerning();
+                    setShowAnswer(false);
+                    setTimeout(() => handleLerning(), 500);
                   }}
                 >
                   Still learning
@@ -112,7 +113,8 @@ export function LearningCard({
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    handleLearned();
+                    setShowAnswer(false);
+                    setTimeout(() => handleLearned(), 500);
                   }}
                 >
                   Known
