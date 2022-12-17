@@ -10,22 +10,18 @@ import { FolderPlusIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import CreateFolderModal from "../components/CreateFolderModal";
 import Folder from "../components/Folder";
 import FolderView from "../components/FolderView";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import PreviewCard from "../components/PreviewCard";
+import { ThemeSwitch } from "../components/ThemeSwitch";
 import { useModalStore } from "../store/modalStore";
 import { trpc } from "../utils/trpc";
-import { ThemeSwitch } from "../components/ThemeSwitch";
-import { themeChange } from "theme-change";
 
 const Home: NextPage = () => {
-  useEffect(() => {
-    themeChange(false);
-  }, []);
   const openModal = useModalStore((state) => state.openModal);
   const [activeId, setActiveId] = useState<string | null>();
   const [folder, setFolder] = useState<string | null>();
