@@ -46,14 +46,14 @@ const Sidebar: React.FC<ISidebarProps> = ({ children, activeTab }) => {
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
         <ul
           className={clsx(
-            "menu relative items-center gap-4 bg-base-100 p-4 text-base-content transition-all duration-300 ease-in-out",
+            "menu bg-base-100 text-base-content relative items-center gap-4 p-4 transition-all duration-300 ease-in-out",
             isShrinked ? "w-24 " : "w-72"
           )}
         >
           <h1 className="m-4 text-center text-4xl font-bold">
             <span
               className={clsx(
-                "text-5xl text-primary",
+                "text-primary text-5xl",
                 isShrinked && "text-4xl"
               )}
             >

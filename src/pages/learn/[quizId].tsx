@@ -143,7 +143,7 @@ const Learn: NextPage = () => {
             </div>
             {isEnd ? (
               <div className="h-full">
-                <div className="card min-h-[500px] w-full border border-slate-100 bg-base-100 shadow-xl">
+                <div className="card bg-base-100 min-h-[500px] w-full border border-slate-100 shadow-xl">
                   <div className="card-body flex flex-col items-center justify-center gap-y-12 text-center">
                     <div className="card-title animate-bounce gap-8 text-5xl">
                       <span className="scale-x-[-1] ">

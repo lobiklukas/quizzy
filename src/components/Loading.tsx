@@ -2,8 +2,8 @@ import * as React from "react";
 
 const Loading: React.FC = () => {
   return (
-    <div className="flex h-screen items-center justify-center bg-base-200">
-      <div className="animate-spin text-primary">
+    <div className="bg-base-200 flex h-screen items-center justify-center">
+      <div className="text-primary animate-spin">
         <svg
           version="1.0"
           xmlns="http://www.w3.org/2000/svg"

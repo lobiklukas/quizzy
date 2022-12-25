@@ -223,7 +223,7 @@ const Home: NextPage = () => {
 
   return (
     <FormProvider {...methods}>
-      <nav className="sticky top-0 z-10 flex w-full items-center justify-between bg-base-200 p-4 px-16 drop-shadow-md">
+      <nav className="bg-base-200 sticky top-0 z-10 flex w-full items-center justify-between p-4 px-16 drop-shadow-md">
         <Link href="/" className="btn-ghost btn">
           Back
         </Link>
@@ -307,7 +307,7 @@ const Home: NextPage = () => {
                         </button>
                         <div
                           key={question.id}
-                          className="card flex max-w-[800px] flex-col items-center justify-center gap-2 bg-base-100 p-8 shadow-xl"
+                          className="card bg-base-100 flex max-w-[800px] flex-col items-center justify-center gap-2 p-8 shadow-xl"
                         >
                           <div className="flex w-full items-center gap-x-2">
                             <input

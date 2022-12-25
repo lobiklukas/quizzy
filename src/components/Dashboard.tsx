@@ -373,7 +373,7 @@ const Dashboard: React.FC<IDashboardProps> = ({ filter }) => {
               ref={animateFolderRef}
               className={clsx(
                 "flex flex-wrap items-center gap-4 p-4 transition-all duration-300 ease-in-out",
-                activeId && "rounded-md bg-base-300"
+                activeId && "bg-base-300 rounded-md"
               )}
             >
               {folders?.length ? (

@@ -42,7 +42,7 @@ export function LearningCard({
     <div onClick={() => setShowAnswer(!showAnswer)}>
       <FormProvider {...methods}>
         <ReactCardFlip isFlipped={showAnswer}>
-          <div className="card relative min-h-[500px] border border-slate-100 bg-base-100 shadow-xl">
+          <div className="card bg-base-100 relative min-h-[500px] border border-slate-100 shadow-xl">
             <div className="absolute top-1.5 right-1.5">
               <button
                 onClick={(e) => {
@@ -69,7 +69,7 @@ export function LearningCard({
               )}
             </div>
           </div>
-          <div className="card min-h-[500px] border border-slate-100 bg-base-100 shadow-xl">
+          <div className="card bg-base-100 min-h-[500px] border border-slate-100 shadow-xl">
             <div className="absolute top-1.5 right-1.5">
               <button
                 onClick={(e) => {

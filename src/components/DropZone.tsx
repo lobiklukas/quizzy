@@ -32,7 +32,7 @@ export default function DropZone({
       >
         <div
           className={clsx(
-            "card mt-8 border-2 border-base-300 transition-all duration-300 ease-in-out",
+            "card border-base-300 mt-8 border-2 transition-all duration-300 ease-in-out",
             isOver ? "bg-base-100" : "bg-base-200"
           )}
         >

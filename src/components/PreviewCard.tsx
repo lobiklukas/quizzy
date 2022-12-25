@@ -30,9 +30,9 @@ export default function PreviewCard({
       {...attributes}
       key={id}
       className={clsx(
-        "card min-h-[200px] w-96 bg-base-100 shadow-xl",
+        "card bg-base-100 min-h-[200px] w-96 shadow-xl",
         isDragging && "opacity-50",
-        isOverlay && "border-2 border-accent"
+        isOverlay && "border-accent border-2"
       )}
     >
       <div className="card-body">

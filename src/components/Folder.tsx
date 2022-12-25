@@ -28,9 +28,9 @@ export default function Folder({
       key={id}
       ref={setNodeRef}
       className={clsx(
-        "indicator card cursor-pointer bg-base-100 shadow-xl",
+        "indicator card bg-base-100 cursor-pointer shadow-xl",
         isOver && "bg-accent",
-        isDragging && "border-2 border-accent"
+        isDragging && "border-accent border-2"
       )}
       onClick={openFolder}
     >
@@ -40,7 +40,7 @@ export default function Folder({
         </span>
         <h2 className="card-title flex justify-between">
           <div className="flex items-center">
-            <FolderIcon className="mr-2 h-8 w-8 text-info-content" />
+            <FolderIcon className="text-info-content mr-2 h-8 w-8" />
             {title}
           </div>
           <button
