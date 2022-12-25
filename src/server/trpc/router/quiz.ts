@@ -78,8 +78,8 @@ export const quizRouter = router({
         includeInFolder: z.boolean().optional(),
       })
     )
-    .query(({ input, ctx }) => {
-      return ctx.prisma.quiz.findMany({
+    .query(async ({ input, ctx }) => {
+      const data = await ctx.prisma.quiz.findMany({
         include: {
           questions: {
             orderBy: {
@@ -88,11 +88,13 @@ export const quizRouter = router({
           },
         },
         where: input.includeInFolder ? {} : { folderId: null },
-
         orderBy: {
           updatedAt: "desc",
         },
       });
+      console.log("🚀 ~ file: quiz.ts:95 ~ .query ~ data", data);
+
+      return data;
     }),
   findOne: publicProcedure
     .input(z.object({ id: z.string() }))

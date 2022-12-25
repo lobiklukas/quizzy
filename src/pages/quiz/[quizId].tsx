@@ -10,6 +10,7 @@ import { EditorWrapper } from "../../EditorWrapper";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { trpc } from "../../utils/trpc";
 import { ThemeSwitch } from "../../components/ThemeSwitch";
+import { requireAuth } from "../../middleware/requireAuth";
 
 type Question = {
   id: number;
@@ -395,5 +396,11 @@ const Home: NextPage = () => {
     </FormProvider>
   );
 };
+
+export const getServerSideProps = requireAuth(async () => {
+  return {
+    props: {},
+  };
+});
 
 export default Home;

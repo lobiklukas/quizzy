@@ -8,6 +8,7 @@ import { LearningCard } from "../../components/LearningCard";
 import Loading from "../../components/Loading";
 import { trpc } from "../../utils/trpc";
 import { ThemeSwitch } from "../../components/ThemeSwitch";
+import { requireAuth } from "../../middleware/requireAuth";
 
 const Learn: NextPage = () => {
   const router = useRouter();
@@ -114,10 +115,6 @@ const Learn: NextPage = () => {
     handleNext();
   };
 
-  console.log(
-    "🚀 ~ file: [quizId].tsx:264 ~ filteredQuestions.length",
-    !isEnd || filteredQuestions.length
-  );
   return (
     <main className="container mx-auto min-h-screen">
       <nav className="mb-auto flex w-full items-center justify-between p-4 px-16">
@@ -261,5 +258,11 @@ const Learn: NextPage = () => {
     </main>
   );
 };
+
+export const getServerSideProps = requireAuth(async () => {
+  return {
+    props: {},
+  };
+});
 
 export default Learn;
