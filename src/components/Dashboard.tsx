@@ -17,6 +17,7 @@ import { useModalStore } from "../store/modalStore";
 import { trpc } from "../utils/trpc";
 import Loading from "./Loading";
 import autoAnimate from "@formkit/auto-animate";
+import { useSession } from "next-auth/react";
 
 interface IDashboardProps {
   filter?: string;
@@ -30,7 +31,7 @@ const Dashboard: React.FC<IDashboardProps> = ({ filter }) => {
   const animateQuizRef = useRef(null);
 
   const utils = trpc.useContext();
-
+  const { data: session } = useSession();
   const { data, isLoading, refetch } = trpc.quiz.getAll.useQuery({
     includeInFolder: true,
   });
@@ -191,6 +192,7 @@ const Dashboard: React.FC<IDashboardProps> = ({ filter }) => {
           selectedQuestionId: "",
           studied: 0,
           folderId: null,
+          userId: session?.user?.id ?? "",
         };
         if (!old?.length) return [newQuiz];
         return [...old, newQuiz];
@@ -373,7 +375,7 @@ const Dashboard: React.FC<IDashboardProps> = ({ filter }) => {
               ref={animateFolderRef}
               className={clsx(
                 "flex flex-wrap items-center gap-4 p-4 transition-all duration-300 ease-in-out",
-                activeId && "bg-base-300 rounded-md"
+                activeId && "rounded-md bg-base-300"
               )}
             >
               {folders?.length ? (
