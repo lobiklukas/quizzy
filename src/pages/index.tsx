@@ -57,7 +57,7 @@ const Home: NextPage = () => {
                   onChange={(e) => setSearch(e.target.value)}
                   type="text"
                   placeholder="Search"
-                  className="input-border input w-full"
+                  className="input-bordered input w-full"
                 />
                 <button
                   className={clsx(
@@ -92,7 +92,8 @@ const Home: NextPage = () => {
               </label>
               <ul
                 tabIndex={0}
-                className="dropdown-content menu rounded-box menu-compact bg-base-100 mt-3 w-52 p-2 shadow"
+                // eslint-disable-next-line tailwindcss/classnames-order
+                className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-100 p-2 shadow"
               >
                 <li>
                   <a className="justify-between">

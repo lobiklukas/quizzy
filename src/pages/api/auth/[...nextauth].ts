@@ -9,8 +9,6 @@ export const AUTH_ROUTES = {
   signIn: "/auth/signin",
   signOut: "/auth/signout",
   error: "/auth/error",
-  verifyRequest: "/auth/verify-request",
-  newUser: "/auth/new-user",
 };
 
 export const authOptions: NextAuthOptions = {
