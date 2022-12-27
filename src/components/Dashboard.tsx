@@ -86,6 +86,7 @@ const Dashboard: React.FC<IDashboardProps> = ({ filter }) => {
           id: "customId",
           updatedAt: new Date(),
           createdAt: new Date(),
+          userId: session?.user?.id ?? "",
         };
         if (!old?.length) return [newFolder];
         return [...old, newFolder];

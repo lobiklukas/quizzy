@@ -57,6 +57,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   Quiz          Quiz[]
+  Folder        Folder[]
 }
 
 model VerificationToken {
@@ -91,6 +92,10 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   quizes    Quiz[]
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+
+  @@index([userId])
 }
 
 model Question {

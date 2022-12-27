@@ -2,7 +2,7 @@ import type { Question } from "@prisma/client";
 import _ from "lodash";
 import { z } from "zod";
 
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 import { QuestionUpdateSchema } from "./question";
 
 export const FolderCreateSchema = z.object({
@@ -20,16 +20,17 @@ export const FolderUpdateSchema = z.object({
 });
 
 export const folderRouter = router({
-  create: publicProcedure
+  create: protectedProcedure
     .input(FolderCreateSchema)
     .mutation(({ input, ctx }) => {
       return ctx.prisma.folder.create({
         data: {
           title: input.title,
+          userId: ctx.session?.user?.id ?? "",
         },
       });
     }),
-  moveToFolder: publicProcedure
+  moveToFolder: protectedProcedure
     .input(
       z.object({
         folderId: z.string(),
@@ -48,7 +49,7 @@ export const folderRouter = router({
 
       return question;
     }),
-  moveFromFolder: publicProcedure
+  moveFromFolder: protectedProcedure
     .input(
       z.object({
         folderId: z.string(),
@@ -68,7 +69,7 @@ export const folderRouter = router({
       return question;
     }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(FolderUpdateSchema)
     .mutation(async ({ input, ctx }) => {
       const quiz = await ctx.prisma?.folder.update({
@@ -77,6 +78,7 @@ export const folderRouter = router({
         },
         data: {
           ..._.omit(input, "questions"),
+          userId: ctx.session?.user?.id ?? "",
         },
       });
       let questions = [] as Question[];
@@ -98,7 +100,7 @@ export const folderRouter = router({
 
       return { ...quiz, questions };
     }),
-  deleteOne: publicProcedure
+  deleteOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input, ctx }) => {
       return ctx.prisma?.folder.delete({
@@ -107,7 +109,7 @@ export const folderRouter = router({
         },
       });
     }),
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.folder.findMany({
       select: {
         id: true,
@@ -120,34 +122,9 @@ export const folderRouter = router({
           },
         },
       },
+      where: {
+        userId: ctx.session?.user?.id ?? "",
+      },
     });
   }),
-  findOne: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const hasQuestion = await ctx.prisma.question.findFirst({
-        where: {
-          quizId: input.id,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      return ctx.prisma.quiz.findFirst({
-        where: {
-          id: input.id,
-        },
-        include: {
-          questions: !!hasQuestion
-            ? {
-                orderBy: {
-                  order: "asc",
-                },
-              }
-            : false,
-        },
-        orderBy: {},
-      });
-    }),
 });
