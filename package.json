@@ -8,7 +8,8 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "start": "next start"
+    "start": "next start",
+    "cy:open": "cypress open --env GOOGLE_USER=$GOOGLE_USER,GOOGLE_PW=$GOOGLE_PW"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.6",
@@ -48,6 +49,8 @@
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "autoprefixer": "^10.4.13",
+    "cypress": "^12.2.0",
+    "cypress-social-logins": "^1.14.0",
     "eslint": "^8.30.0",
     "eslint-config-next": "13.1.1",
     "eslint-plugin-tailwindcss": "^3.7.1",

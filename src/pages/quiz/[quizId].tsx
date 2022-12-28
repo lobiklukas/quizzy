@@ -93,12 +93,6 @@ const Home: NextPage = () => {
   });
 
   const handleAddQuestion = async (order?: number) => {
-    // if (order == 0) order = 1;
-    console.log(
-      "🚀 ~ file: [quizId].tsx:95 ~ handleAddQuestion ~ order",
-      order
-    );
-
     const result = await create({
       quizId: id,
       title: "",
@@ -118,10 +112,6 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    console.log(
-      "🚀 ~ file: [quizId].tsx:126 ~ fields.forEach ~ fields",
-      fields
-    );
     // fix orderIds based on fields index
     fields.forEach((q, index) => {
       if (q.order !== index + 1) {
@@ -172,7 +162,6 @@ const Home: NextPage = () => {
     async (questionId: string) => {
       const index = fields.findIndex((q) => q.id === questionId);
       const question = methods.getValues(`questions.${index}`);
-      console.log("🚀 ~ file: [quizId].tsx:145 ~ question", question);
 
       if (question) {
         const result = await updateQuestion({
@@ -248,10 +237,9 @@ const Home: NextPage = () => {
           <button className="btn-primary btn" onClick={() => handleSaveAll()}>
             Save
           </button>
-          <ThemeSwitch />
         </div>
       </nav>
-      <main className="container mx-auto mt-12 flex flex-col items-center justify-center">
+      <main id="edit-form" className="container mx-auto mt-12 flex flex-col items-center justify-center">
         <div className="overflow-x-auto"></div>
         <div className="flex min-h-screen flex-col items-center justify-center">
           {quiz && (

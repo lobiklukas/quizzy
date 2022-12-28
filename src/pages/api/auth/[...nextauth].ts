@@ -16,10 +16,6 @@ export const authOptions: NextAuthOptions = {
   pages: AUTH_ROUTES,
   callbacks: {
     session({ session, user }) {
-      console.log(
-        "🚀 ~ file: [...nextauth].ts:21 ~ session ~ session",
-        session
-      );
       if (session.user) {
         session.user.id = user.id;
       }

@@ -18,13 +18,11 @@ import { trpc } from "../utils/trpc";
 import Loading from "./Loading";
 import autoAnimate from "@formkit/auto-animate";
 import { useSession } from "next-auth/react";
+import { useSearchStore } from "../store/searchStore";
 
-interface IDashboardProps {
-  filter?: string;
-}
-
-const Dashboard: React.FC<IDashboardProps> = ({ filter }) => {
+const Dashboard: React.FC = () => {
   const openModal = useModalStore((state) => state.openModal);
+  const filter = useSearchStore((state) => state.search);
   const [activeId, setActiveId] = useState<string | null>();
   const [folder, setFolder] = useState<string | null>();
   const animateFolderRef = useRef(null);
@@ -332,7 +330,7 @@ const Dashboard: React.FC<IDashboardProps> = ({ filter }) => {
   }
 
   return (
-    <div className="px-2 md:px-4">
+    <div id="dashboard" className="px-2 md:px-4">
       {selectedFolder ? (
         <FolderView
           id={selectedFolder.id}

@@ -38,10 +38,6 @@ const Learn: NextPage = () => {
   );
 
   useEffect(() => {
-    console.log(
-      "🚀 ~ file: [quizId].tsx:40 ~ useEffect ~ filteredQuestions",
-      filteredQuestions
-    );
     if (!isLoading && filteredQuestions.length === 0 && audio && audio.paused) {
       audio?.play();
       audio.loop = true;
@@ -116,12 +112,11 @@ const Learn: NextPage = () => {
   };
 
   return (
-    <main className="container mx-auto min-h-screen">
+    <main id="#learning-card" className="container mx-auto min-h-screen">
       <nav className="mb-auto flex w-full items-center justify-between p-4 px-16">
         <Link href="/" className="btn-primary btn font-bold">
           Back
         </Link>
-        <ThemeSwitch />
       </nav>
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
         {!!filteredQuestions.length && (
@@ -143,7 +138,7 @@ const Learn: NextPage = () => {
             </div>
             {isEnd ? (
               <div className="h-full">
-                <div className="card bg-base-100 min-h-[500px] w-full border border-slate-100 shadow-xl">
+                <div className="card min-h-[500px] w-full border border-slate-100 bg-base-100 shadow-xl">
                   <div className="card-body flex flex-col items-center justify-center gap-y-12 text-center">
                     <div className="card-title animate-bounce gap-8 text-5xl">
                       <span className="scale-x-[-1] ">

@@ -26,8 +26,10 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
-, "tailwind.config.cjs"  ],
+    "**/*.mjs",
+    "tailwind.config.cjs",
+    "cypress/plugins/index.js"
+  ],
   "exclude": [
     "node_modules"
   ]

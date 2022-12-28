@@ -15,7 +15,6 @@ export default function DropZone({
   const { setNodeRef, isOver } = useDroppable({
     id: id,
   });
-  console.log("🚀 ~ file: DropZone.tsx:18 ~ isOver", isOver);
 
   return (
     <div ref={setNodeRef}>

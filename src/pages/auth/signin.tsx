@@ -13,6 +13,7 @@ const Login: React.FC = () => {
           <div className="flex flex-col items-center justify-center">
             {/* style login form using daisyui it will have option to login with gmail */}
             <button
+              id="google-login"
               className="btn-primary btn-outline btn-wide btn fill-primary hover:fill-primary-content gap-2 border-2"
               onClick={() => signIn("google")}
             >
