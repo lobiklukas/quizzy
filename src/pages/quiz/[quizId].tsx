@@ -1,4 +1,4 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { type NextPage } from "next";
 import Link from "next/link";
@@ -212,9 +212,9 @@ const Home: NextPage = () => {
 
   return (
     <FormProvider {...methods}>
-      <nav className="bg-base-200 sticky top-0 z-10 flex w-full items-center justify-between p-4 px-16 drop-shadow-md">
-        <Link href="/" className="btn-ghost btn">
-          Back
+      <nav className="container sticky top-0 z-10 mx-auto flex w-full items-center justify-between bg-base-200 p-2 drop-shadow-md md:px-16">
+        <Link href="/" className="btn-accent btn-circle btn mr-2">
+          <ChevronLeftIcon className="h-6 w-6" />
         </Link>
         <div className="flex items-center gap-2">
           {isCreateLoading ||
@@ -239,7 +239,10 @@ const Home: NextPage = () => {
           </button>
         </div>
       </nav>
-      <main id="edit-form" className="container mx-auto mt-12 flex flex-col items-center justify-center">
+      <main
+        id="edit-form"
+        className="container mx-auto mt-12 flex flex-col items-center justify-center"
+      >
         <div className="overflow-x-auto"></div>
         <div className="flex min-h-screen flex-col items-center justify-center">
           {quiz && (
@@ -295,7 +298,7 @@ const Home: NextPage = () => {
                         </button>
                         <div
                           key={question.id}
-                          className="card bg-base-100 flex max-w-[800px] flex-col items-center justify-center gap-2 p-8 shadow-xl"
+                          className="card flex max-w-[800px] flex-col items-center justify-center gap-2 bg-base-100 p-8 shadow-xl"
                         >
                           <div className="flex w-full items-center gap-x-2">
                             <input

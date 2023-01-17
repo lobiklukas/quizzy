@@ -20,3 +20,8 @@ html {
 .ql-toolbar .ql-picker {
   @apply text-base-content !important;
 }
+
+.card-body .ql-editor ol,
+.card-body .ql-editor ul {
+  padding-left: 0;
+}
