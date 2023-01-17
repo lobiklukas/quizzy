@@ -1,4 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
+import { ArrowsPointingOutIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import Link from "next/link";
@@ -26,18 +27,21 @@ export default function PreviewCard({
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
       key={id}
       className={clsx(
-        "card bg-base-100 min-h-[200px] w-96 shadow-xl",
+        "card min-h-[200px] w-96 bg-base-100 shadow-xl",
         isDragging && "opacity-50",
-        isOverlay && "border-accent border-2"
+        isOverlay && "border-2 border-accent"
       )}
     >
       <div className="card-body">
         <h2 className="card-title flex justify-between">
-          {title}
+          <div className="flex items-center gap-1">
+            <div {...listeners} {...attributes}>
+              <ArrowsPointingOutIcon className="h-6 w-6 rotate-45" />
+            </div>
+            {title}
+          </div>
           <button
             className="btn-secondary btn"
             disabled={id === "customId"}
