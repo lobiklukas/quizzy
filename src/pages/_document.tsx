@@ -7,7 +7,9 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <meta name="description" content="Quizzy" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="manifest" href="/manifest.json" />
           <meta name="application-name" content="Quizzy" />
           <meta name="apple-mobile-web-app-title" content="Quizzy" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
