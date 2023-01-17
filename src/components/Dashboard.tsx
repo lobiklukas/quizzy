@@ -315,13 +315,7 @@ const Dashboard: React.FC = () => {
     [folders, folder]
   );
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
-  );
+  const sensors = useSensors(useSensor(PointerSensor, {}));
 
   // IS folder or quiz loading
 
