@@ -3,8 +3,8 @@
     "short_name": "Quizzy",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#06B6D4",
-    "theme_color": "#06B6D4",
+    "background_color": "black-translucent",
+    "theme_color": "black-translucent",
     "orientation": "portrait-primary",
     "icons": [
         {
