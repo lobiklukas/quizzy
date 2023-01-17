@@ -18,12 +18,12 @@ export const MainNavBar: React.FC = () => {
   }));
   const { data: session } = useSession();
   return (
-    <div className="navbar mb-8 flex w-full gap-2 md:gap-4">
+    <div className="navbar flex w-full gap-2 md:mb-8 md:gap-4">
       <div className="flex w-full md:gap-2">
         <div>
           <label
             htmlFor="my-drawer-2"
-            className="drawer-button btn-ghost btn p-2 lg:hidden"
+            className="btn-ghost drawer-button btn p-2 lg:hidden"
           >
             <Bars3Icon className="h-6 w-6" />
           </label>

@@ -7,8 +7,9 @@ import { useEffect, useMemo, useState } from "react";
 import { LearningCard } from "../../components/LearningCard";
 import Loading from "../../components/Loading";
 import { trpc } from "../../utils/trpc";
-import { ThemeSwitch } from "../../components/ThemeSwitch";
 import { requireAuth } from "../../middleware/requireAuth";
+import { ChevronLeftIcon } from "@heroicons/react/24/solid";
+import { useSwipeable } from "react-swipeable";
 
 const Learn: NextPage = () => {
   const router = useRouter();
@@ -47,7 +48,7 @@ const Learn: NextPage = () => {
     return () => {
       audio?.pause();
     };
-  }, [audio, filteredQuestions.length]);
+  }, [audio, filteredQuestions.length, isLoading]);
 
   const selectedQuestion = useMemo(() => {
     if (filteredQuestions) {
@@ -113,9 +114,9 @@ const Learn: NextPage = () => {
 
   return (
     <main id="#learning-card" className="container mx-auto min-h-screen">
-      <nav className="mb-auto flex w-full items-center justify-between p-4 px-16">
-        <Link href="/" className="btn-primary btn font-bold">
-          Back
+      <nav className="mb-auto flex w-full items-center justify-between p-4">
+        <Link href="/" className="btn-secondary btn-circle btn font-bold">
+          <ChevronLeftIcon className="h-5 w-5" />
         </Link>
       </nav>
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
@@ -131,6 +132,7 @@ const Learn: NextPage = () => {
             <div className="flex w-full flex-col items-center justify-center gap-2">
               {(selectedIndex ?? 0) + 1} / {filteredQuestions?.length}
               <progress
+                // eslint-disable-next-line tailwindcss/no-custom-classname
                 className="flip progress my-4 w-full"
                 value={(selectedIndex ?? 0) + 1}
                 max={filteredQuestions?.length}
@@ -235,7 +237,7 @@ const Learn: NextPage = () => {
             width={200}
             height={300}
             alt="end"
-            className="duration-70 animate-pulse"
+            className="animate-pulse duration-75"
           />
           <button
             onClick={async () => {
