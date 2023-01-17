@@ -37,7 +37,7 @@ export default function PreviewCard({
       <div className="card-body">
         <h2 className="card-title flex justify-between">
           <div className="flex items-center gap-1">
-            <div {...listeners} {...attributes}>
+            <div {...listeners} {...attributes} className="touch-none">
               <ArrowsPointingOutIcon className="h-4 w-4 rotate-45" />
             </div>
             {title}

@@ -42,7 +42,7 @@ const Settings: React.FC = () => {
     <div className="flex h-full w-full flex-col gap-2 p-8">
       <h1 className="text-4xl font-bold">Settings</h1>
       <span className="divider" />
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div>
           <h4 className="text-2xl font-bold">Appearance</h4>
           <h5>Interface theme</h5>
