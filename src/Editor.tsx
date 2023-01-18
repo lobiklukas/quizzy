@@ -5,9 +5,10 @@ import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 import ImageCompress from "quill-image-compress";
+import BlotFormatter from "@prcdavid/quill-blot-formatter";
 
+Quill.register("modules/blotFormatter", BlotFormatter);
 Quill.register("modules/imageCompress", ImageCompress);
-Quill.register("modules/cursors", QuillCursors);
 
 interface IEditorProps {
   value: string;
@@ -30,7 +31,8 @@ const modules = {
     [{ align: [] }],
     ["clean"], // remove formatting button
   ],
-  cursors: true,
+  blotFormatter: {},
+  imageCompress: {},
 };
 
 const Editor: React.FC<IEditorProps> = ({ value, onBlur, onChange }) => {

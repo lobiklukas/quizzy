@@ -206,37 +206,45 @@ const Home: NextPage = () => {
     }
   }, [lastSubmit?.values.questions, methods, quiz?.id, storeValue, updateQuiz]);
 
+  useEffect(() => {
+    return () => {
+      handleSaveQuiz();
+    };
+  }, [handleSaveQuiz]);
+
   if (isLoading) {
     return <Loading />;
   }
 
   return (
     <FormProvider {...methods}>
-      <nav className="container sticky top-0 z-10 mx-auto flex w-full items-center justify-between bg-base-200 p-2 drop-shadow-md md:px-16">
-        <Link href="/" className="btn-accent btn-circle btn mr-2">
-          <ChevronLeftIcon className="h-6 w-6" />
-        </Link>
-        <div className="flex items-center gap-2">
-          {isCreateLoading ||
-          isUpdateQuizLoading ||
-          isUpdateQuestionLoading ||
-          isDeleteLoading ? (
-            <div className="text-base">Saving...</div>
-          ) : (
-            <span>
-              Naposledy uloženo:{" "}
-              {(lastSubmit?.updated ?? updatedAt)?.toLocaleString("cs")}
-            </span>
-          )}
-          <button
-            className="btn-secondary btn"
-            onClick={() => methods.reset(storedValue)}
-          >
-            Load
-          </button>
-          <button className="btn-primary btn" onClick={() => handleSaveAll()}>
-            Save
-          </button>
+      <nav className="sticky top-0 z-10 w-full bg-base-200 p-2 drop-shadow-md md:px-16">
+        <div className="container mx-auto flex items-center justify-between">
+          <Link href="/" className="btn-accent btn-circle btn mr-2">
+            <ChevronLeftIcon className="h-6 w-6" />
+          </Link>
+          <div className="flex items-center gap-2">
+            {isCreateLoading ||
+            isUpdateQuizLoading ||
+            isUpdateQuestionLoading ||
+            isDeleteLoading ? (
+              <div className="text-base">Saving...</div>
+            ) : (
+              <span>
+                Naposledy uloženo:{" "}
+                {(lastSubmit?.updated ?? updatedAt)?.toLocaleString("cs")}
+              </span>
+            )}
+            <button
+              className="btn-secondary btn"
+              onClick={() => methods.reset(storedValue)}
+            >
+              Load
+            </button>
+            <button className="btn-primary btn" onClick={() => handleSaveAll()}>
+              Save
+            </button>
+          </div>
         </div>
       </nav>
       <main
