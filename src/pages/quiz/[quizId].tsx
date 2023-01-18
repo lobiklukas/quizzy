@@ -206,12 +206,6 @@ const Home: NextPage = () => {
     }
   }, [lastSubmit?.values.questions, methods, quiz?.id, storeValue, updateQuiz]);
 
-  useEffect(() => {
-    return () => {
-      handleSaveQuiz();
-    };
-  }, [handleSaveQuiz]);
-
   if (isLoading) {
     return <Loading />;
   }
