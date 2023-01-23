@@ -5,12 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import Loading from "../../components/Loading";
 import { EditorWrapper } from "../../EditorWrapper";
+import Loading from "../../components/Loading";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { trpc } from "../../utils/trpc";
-import { ThemeSwitch } from "../../components/ThemeSwitch";
 import { requireAuth } from "../../middleware/requireAuth";
+import { trpc } from "../../utils/trpc";
 
 type Question = {
   id: number;
@@ -111,17 +110,25 @@ const Home: NextPage = () => {
     }
   };
 
-  useEffect(() => {
-    // fix orderIds based on fields index
-    fields.forEach((q, index) => {
+  const fixOrder = useCallback(() => {
+    const values = methods.getValues();
+    const questions = values.questions.map((q, index) => ({
+      ...q,
+      order: index + 1,
+    }));
+    methods.setValue("questions", questions);
+    // update all questions order which is not equal to index + 1
+    values.questions.forEach((q, index) => {
       if (q.order !== index + 1) {
         updateQuestion({
-          id: q.id,
+          ...q,
           order: index + 1,
+          id: q.id,
+          quizId: id,
         });
       }
     });
-  }, [fields, updateQuestion]);
+  }, [id, methods, updateQuestion]);
 
   const handleRemoveQuestion = async (id: string) => {
     const index = fields.findIndex((q) => q.id === id);
@@ -245,7 +252,6 @@ const Home: NextPage = () => {
         id="edit-form"
         className="container mx-auto mt-12 flex flex-col items-center justify-center"
       >
-        <div className="overflow-x-auto"></div>
         <div className="flex min-h-screen flex-col items-center justify-center">
           {quiz && (
             <div
@@ -299,7 +305,7 @@ const Home: NextPage = () => {
                           <PlusIcon className="h-4 w-4" />
                         </button>
                         <div
-                          key={question.id}
+                          key={question.cid}
                           className="card flex max-w-[800px] flex-col items-center justify-center gap-2 bg-base-100 p-8 shadow-xl"
                         >
                           <div className="flex w-full items-center gap-x-2">
@@ -326,6 +332,7 @@ const Home: NextPage = () => {
                                   value !== index + 1
                                 ) {
                                   move(index, Number(value) - 1);
+                                  fixOrder();
                                 }
                               }}
                               className="input-ghost input w-24"
@@ -382,7 +389,7 @@ const Home: NextPage = () => {
         </div>
       </main>
       {toastMessage && (
-        <div className="toast-end toast toast-top">
+        <div className="toast-end toast toast-top z-20">
           <div className="alert alert-success">
             <div>
               <span>{toastMessage}</span>
