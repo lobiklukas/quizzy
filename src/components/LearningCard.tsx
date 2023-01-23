@@ -24,6 +24,10 @@ export function LearningCard({
   const [showAnswer, setShowAnswer] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
 
+  React.useEffect(() => {
+    methods.reset(data);
+  }, [data, methods]);
+
   const utils = trpc.useContext();
   const { mutate: updateQuestion } = trpc.question.update.useMutation({
     onMutate: async (updatedQuestion) => {

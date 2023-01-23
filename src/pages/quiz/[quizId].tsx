@@ -336,6 +336,10 @@ const Home: NextPage = () => {
                               type="hidden"
                             />
                             <input
+                              {...register(`questions.${index}.order` as const)}
+                              type="hidden"
+                            />
+                            <input
                               {...register(
                                 `questions.${index}.quizId` as const
                               )}
