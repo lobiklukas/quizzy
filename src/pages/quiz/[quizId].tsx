@@ -91,25 +91,6 @@ const Home: NextPage = () => {
     keyName: "cid",
   });
 
-  const handleAddQuestion = async (order?: number) => {
-    const result = await create({
-      quizId: id,
-      title: "",
-      answer: "",
-      order: order ?? fields.length + 1,
-    });
-    if (result) {
-      const question = { ...result, id: result.id.toString() };
-      if (order) {
-        return insert(order, question);
-      } else if (order === 0) {
-        return prepend(question);
-      }
-
-      return append(question);
-    }
-  };
-
   const fixOrder = useCallback(() => {
     const values = methods.getValues();
     const questions = values.questions.map((q, index) => ({
@@ -129,6 +110,26 @@ const Home: NextPage = () => {
       }
     });
   }, [id, methods, updateQuestion]);
+
+  const handleAddQuestion = async (order?: number) => {
+    const result = await create({
+      quizId: id,
+      title: "",
+      answer: "",
+      order: order ?? fields.length + 1,
+    });
+    if (result) {
+      const question = { ...result, id: result.id.toString() };
+      if (order) {
+        insert(order, question);
+      } else if (order === 0) {
+        prepend(question);
+      } else {
+        append(question);
+      }
+      fixOrder();
+    }
+  };
 
   const handleRemoveQuestion = async (id: string) => {
     const index = fields.findIndex((q) => q.id === id);

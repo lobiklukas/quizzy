@@ -9,7 +9,7 @@ import Loading from "../../components/Loading";
 import { trpc } from "../../utils/trpc";
 import { requireAuth } from "../../middleware/requireAuth";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import { useSwipeable } from "react-swipeable";
+import clsx from "clsx";
 
 const Learn: NextPage = () => {
   const router = useRouter();
@@ -53,6 +53,13 @@ const Learn: NextPage = () => {
   const selectedQuestion = useMemo(() => {
     if (filteredQuestions) {
       return filteredQuestions[selectedIndex ?? 0];
+    }
+  }, [filteredQuestions, selectedIndex]);
+
+  const questions = useMemo(() => {
+    if (filteredQuestions) {
+      const index = selectedIndex ?? 0;
+      return [filteredQuestions?.[index], filteredQuestions?.[index + 1]];
     }
   }, [filteredQuestions, selectedIndex]);
 
@@ -187,15 +194,21 @@ const Learn: NextPage = () => {
                 </div>
               </div>
             ) : (
-              selectedQuestion && (
-                <div className="mt-2 w-full">
-                  <LearningCard
-                    handleLerning={handleNext}
-                    handleLearned={handleLearned}
-                    data={selectedQuestion}
-                  />
+              questions &&
+              questions.map((item, i) => (
+                <div
+                  key={item?.id}
+                  className={clsx("mt-2 w-full", i === 1 && "hidden")}
+                >
+                  {item && (
+                    <LearningCard
+                      handleLerning={handleNext}
+                      handleLearned={handleLearned}
+                      data={item}
+                    />
+                  )}
                 </div>
-              )
+              ))
             )}
           </>
         )}
