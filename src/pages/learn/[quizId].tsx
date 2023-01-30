@@ -1,4 +1,8 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftIcon,
+  ArrowPathIcon,
+  ArrowRightIcon,
+} from "@heroicons/react/24/outline";
 import { type NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,6 +34,8 @@ const Learn: NextPage = () => {
   } = trpc.quiz.findOne.useQuery({ id: id });
 
   const { mutate: updateQuiz } = trpc.quiz.update.useMutation();
+  const { mutateAsync: restartQuizProgress } =
+    trpc.quiz.restartProgress.useMutation();
   const { mutate: updateQuestion } = trpc.question.update.useMutation();
   const { mutateAsync: unLearn } = trpc.question.unLearn.useMutation();
 
@@ -119,12 +125,28 @@ const Learn: NextPage = () => {
     handleNext();
   };
 
+  const handleRestartProgress = async () => {
+    if (quiz?.id) {
+      await restartQuizProgress({ id: quiz.id });
+      await refetch();
+      setSelectedIndex(0);
+      setIsEnd(false);
+    }
+  };
+
   return (
     <main id="#learning-card" className="container mx-auto min-h-screen">
       <nav className="mb-auto flex w-full items-center justify-between p-4">
         <Link href="/" className="btn-secondary btn-circle btn font-bold">
           <ChevronLeftIcon className="h-5 w-5" />
         </Link>
+
+        <button
+          className="btn-secondary btn-circle btn"
+          onClick={handleRestartProgress}
+        >
+          <ArrowPathIcon className="h-5 w-5" />
+        </button>
       </nav>
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
         {!!filteredQuestions.length && (

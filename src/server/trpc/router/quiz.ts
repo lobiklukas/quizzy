@@ -67,6 +67,20 @@ export const quizRouter = router({
 
       return { ...quiz, questions };
     }),
+  restartProgress: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const questions = await ctx.prisma?.question.updateMany({
+        where: {
+          quizId: input.id,
+        },
+        data: {
+          learned: false,
+        },
+      });
+
+      return questions;
+    }),
   deleteOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input, ctx }) => {
