@@ -1,11 +1,10 @@
 import dynamic from "next/dynamic";
-import QuillCursors from "quill-cursors";
 import React from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-import ImageCompress from "quill-image-compress";
 import BlotFormatter from "@prcdavid/quill-blot-formatter";
+import ImageCompress from "quill-image-compress";
 
 Quill.register("modules/blotFormatter", BlotFormatter);
 Quill.register("modules/imageCompress", ImageCompress);

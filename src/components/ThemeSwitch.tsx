@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
+import { useEffect } from "react";
 import { themeChange } from "theme-change";
 import { themes } from "../data";
-import clsx from "clsx";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 interface IThemeSwitchProps {
   type?: "dropwdown" | "select";

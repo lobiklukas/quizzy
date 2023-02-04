@@ -1,23 +1,31 @@
-import {
-  ArrowLeftIcon,
-  ArrowPathIcon,
-  ArrowRightIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import clsx from "clsx";
 import { type NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import LearnSettingsModal from "../../components/LearnSettingsModal";
 import { LearningCard } from "../../components/LearningCard";
 import Loading from "../../components/Loading";
-import { trpc } from "../../utils/trpc";
+import Modal from "../../components/Modal";
 import { requireAuth } from "../../middleware/requireAuth";
-import { ChevronLeftIcon } from "@heroicons/react/24/solid";
-import clsx from "clsx";
+import { useLearningStore } from "../../store/learnStore";
+import { useModalStore } from "../../store/modalStore";
+import { trpc } from "../../utils/trpc";
 
 const Learn: NextPage = () => {
   const router = useRouter();
   const id = (router.query?.quizId as string) || "";
+
+  const { openModal } = useModalStore((store) => ({
+    openModal: store.openModal,
+  }));
+
+  const { isShuffled } = useLearningStore((store) => ({
+    isShuffled: store.isShuffled,
+  }));
 
   const [audio, setAudio] = useState<HTMLAudioElement>();
   useEffect(() => {
@@ -39,10 +47,18 @@ const Learn: NextPage = () => {
   const { mutate: updateQuestion } = trpc.question.update.useMutation();
   const { mutateAsync: unLearn } = trpc.question.unLearn.useMutation();
 
-  const filteredQuestions = useMemo(
-    () => quiz?.questions.filter((question) => !question.learned) ?? [],
-    [quiz?.questions]
-  );
+  const filteredQuestions = useMemo(() => {
+    let questions =
+      quiz?.questions.filter((question) => !question.learned) ?? [];
+    if (isShuffled) {
+      console.log(
+        "🚀 ~ file: [quizId].tsx:54 ~ filteredQuestions ~ isShuffled",
+        isShuffled
+      );
+      questions = questions.sort(() => Math.random() - 0.5);
+    }
+    return questions;
+  }, [isShuffled, quiz?.questions]);
 
   useEffect(() => {
     if (!isLoading && filteredQuestions.length === 0 && audio && audio.paused) {
@@ -134,6 +150,16 @@ const Learn: NextPage = () => {
     }
   };
 
+  const openLearningSettings = () => {
+    openModal({
+      modal: {
+        title: "Learning Settings",
+        content: <LearnSettingsModal restartProgress={handleRestartProgress} />,
+        showActions: false,
+      },
+    });
+  };
+
   return (
     <main id="#learning-card" className="container mx-auto min-h-screen">
       <nav className="mb-auto flex w-full items-center justify-between p-4">
@@ -142,10 +168,10 @@ const Learn: NextPage = () => {
         </Link>
 
         <button
-          className="btn-secondary btn-circle btn"
-          onClick={handleRestartProgress}
+          className="btn-outline btn-circle btn"
+          onClick={openLearningSettings}
         >
-          <ArrowPathIcon className="h-5 w-5" />
+          <Cog6ToothIcon className="h-5 w-5" />
         </button>
       </nav>
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
@@ -287,6 +313,7 @@ const Learn: NextPage = () => {
           </button>
         </div>
       )}
+      <Modal />
     </main>
   );
 };

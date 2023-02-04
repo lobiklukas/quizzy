@@ -4,10 +4,10 @@ import { type AppType } from "next/app";
 
 import { trpc } from "../utils/trpc";
 
-import "../styles/globals.css";
+import Head from "next/head";
 import { useEffect } from "react";
 import { themeChange } from "theme-change";
-import Head from "next/head";
+import "../styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

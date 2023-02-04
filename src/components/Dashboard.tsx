@@ -1,24 +1,24 @@
 import {
   DndContext,
   DragOverlay,
-  useSensor,
   PointerSensor,
+  useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import autoAnimate from "@formkit/auto-animate";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { FolderPlusIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CreateFolderModal from "../components/CreateFolderModal";
 import Folder from "../components/Folder";
 import FolderView from "../components/FolderView";
 import PreviewCard from "../components/PreviewCard";
 import { useModalStore } from "../store/modalStore";
+import { useSearchStore } from "../store/searchStore";
 import { trpc } from "../utils/trpc";
 import Loading from "./Loading";
-import autoAnimate from "@formkit/auto-animate";
-import { useSession } from "next-auth/react";
-import { useSearchStore } from "../store/searchStore";
 
 const Dashboard: React.FC = () => {
   const openModal = useModalStore((state) => state.openModal);

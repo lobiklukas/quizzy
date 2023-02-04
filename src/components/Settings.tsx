@@ -1,8 +1,8 @@
+import Image from "next/image";
 import * as React from "react";
+import { themes } from "../data";
 import { useSearchStore } from "../store/searchStore";
 import { ThemeSwitch } from "./ThemeSwitch";
-import { themes } from "../data";
-import Image from "next/image";
 
 const PreviewImages = [
   {

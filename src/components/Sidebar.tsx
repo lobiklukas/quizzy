@@ -1,7 +1,6 @@
 import { Transition } from "@headlessui/react";
 import {
-  AdjustmentsHorizontalIcon,
-  ChevronLeftIcon,
+  ChevronLeftIcon
 } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { useEffect, useState } from "react";

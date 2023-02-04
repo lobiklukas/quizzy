@@ -1,8 +1,8 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 // eslint-disable-next-line camelcase
 import { unstable_getServerSession } from "next-auth";
-import { AUTH_ROUTES, authOptions } from "../pages/api/auth/[...nextauth]";
 import { env } from "../env/server.mjs";
+import { AUTH_ROUTES, authOptions } from "../pages/api/auth/[...nextauth]";
 
 export const requireAuth =
   (func: GetServerSideProps) => async (ctx: GetServerSidePropsContext) => {

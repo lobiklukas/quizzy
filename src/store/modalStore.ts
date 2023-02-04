@@ -14,7 +14,7 @@ interface ModalState {
     onConfirm,
     modal,
   }: {
-    onConfirm: (value?: string) => void;
+    onConfirm?: (value?: string) => void;
     modal: Modal;
   }) => void;
   closeModal: () => void;

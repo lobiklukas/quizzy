@@ -1,7 +1,7 @@
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import create from "zustand";
 import Dashboard from "../components/Dashboard";
 import Settings from "../components/Settings";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 
 export const TABS = [
   {

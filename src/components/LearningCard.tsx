@@ -9,6 +9,7 @@ import { EditorWrapper } from "../EditorWrapper";
 import { trpc } from "../utils/trpc";
 
 import _ from "lodash";
+import { useLearningStore } from "../store/learnStore";
 export interface ILergingCardProps {
   data: Question;
   handleLerning: () => void;
@@ -21,8 +22,16 @@ export function LearningCard({
   handleLearned,
 }: ILergingCardProps) {
   const methods = useForm({ defaultValues: data });
-  const [showAnswer, setShowAnswer] = React.useState(false);
+  const isFrontFirst = useLearningStore((state) => state.isFrontFirst);
+  console.log("🚀 ~ file: LearningCard.tsx:26 ~ isFrontFirst", isFrontFirst);
+
+  const [showAnswer, setShowAnswer] = React.useState(!isFrontFirst);
+  console.log("🚀 ~ file: LearningCard.tsx:29 ~ showAnswer", showAnswer);
   const [editMode, setEditMode] = React.useState(false);
+
+  React.useEffect(() => {
+    setShowAnswer(!isFrontFirst);
+  }, [isFrontFirst]);
 
   React.useEffect(() => {
     methods.reset(data);
@@ -64,10 +73,6 @@ export function LearningCard({
       return { prevQuiz };
     },
   });
-
-  React.useEffect(() => {
-    setShowAnswer(false);
-  }, [data.id]);
 
   const handleUpdate = _.debounce(() => {
     const values = methods.getValues();

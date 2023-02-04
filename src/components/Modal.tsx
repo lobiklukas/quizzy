@@ -1,4 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { useModalStore } from "../store/modalStore";
 
@@ -48,12 +49,18 @@ export default function Modal() {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="bg-base-300 w-full max-w-md overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-md overflow-hidden rounded-2xl bg-base-300 p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-center text-lg font-medium leading-6"
+                  className="flex items-center justify-between text-2xl font-medium leading-6"
                 >
                   {title}
+                  <button
+                    onClick={handleClose}
+                    className="btn-ghost btn-circle btn"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
                 </Dialog.Title>
                 {content}
                 {showActions && (

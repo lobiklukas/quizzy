@@ -1,12 +1,10 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import Dashboard from "../components/Dashboard";
+import { MainNavBar } from "../components/MainNavBar";
 import Modal from "../components/Modal";
 import Sidebar from "../components/Sidebar";
 import { requireAuth } from "../middleware/requireAuth";
-import { MainNavBar } from "../components/MainNavBar";
 import { useTabStore } from "../store/tabStore";
 
 const Home: NextPage = () => {

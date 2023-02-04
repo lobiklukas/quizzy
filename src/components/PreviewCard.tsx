@@ -29,7 +29,7 @@ export default function PreviewCard({
       ref={setNodeRef}
       key={id}
       className={clsx(
-        "card min-h-[200px] w-96 bg-base-100 shadow-xl",
+        "card min-h-[200px] w-80 bg-base-100 shadow-xl lg:w-96",
         isDragging && "opacity-50",
         isOverlay && "border-2 border-accent"
       )}
@@ -43,7 +43,7 @@ export default function PreviewCard({
             {title}
           </div>
           <button
-            className="btn-secondary btn"
+            className="btn-secondary btn-circle btn"
             disabled={id === "customId"}
             onMouseDown={(e) => {
               e.preventDefault();
@@ -51,11 +51,11 @@ export default function PreviewCard({
               onDelete?.(id);
             }}
           >
-            <TrashIcon className="h-6 w-6" />
+            <TrashIcon className="h-5 w-5" />
           </button>
         </h2>
         <p>{description}</p>
-        <div className="card-actions justify-end">
+        <div className="card-actions mt-2 justify-center gap-2 lg:gap-4">
           <Link
             slot="./learn/[quizId]"
             href={`./learn/${id}`}
