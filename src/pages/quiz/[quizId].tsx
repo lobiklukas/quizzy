@@ -10,6 +10,8 @@ import Loading from "../../components/Loading";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { requireAuth } from "../../middleware/requireAuth";
 import { trpc } from "../../utils/trpc";
+import { useConnection } from "../../hooks/useConnection";
+import clsx from "clsx";
 
 type Question = {
   id: number;
@@ -29,6 +31,16 @@ const defaultQuiz = { title: "", description: "", questions: [] };
 const Home: NextPage = () => {
   const router = useRouter();
   const id = (router.query?.quizId as string) || "";
+
+  const isConnected = useConnection();
+
+  useEffect(() => {
+    if (!isConnected) {
+      setToastMessage("You are offline");
+    } else {
+      setToastMessage(null);
+    }
+  }, [isConnected]);
 
   const [enableRefetch, setEnableRefetch] = useState(true);
 
@@ -391,7 +403,12 @@ const Home: NextPage = () => {
       </main>
       {toastMessage && (
         <div className="toast-end toast toast-top z-20">
-          <div className="alert alert-success">
+          <div
+            className={clsx(
+              "alert",
+              isConnected ? "alert-success" : "alert-error"
+            )}
+          >
             <div>
               <span>{toastMessage}</span>
             </div>

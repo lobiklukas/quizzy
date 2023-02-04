@@ -10,6 +10,7 @@ const pwa = withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
+  reloadOnOnline: false,
 });
 
 /** @type {import("next").NextConfig} */
@@ -28,5 +29,6 @@ const config = {
       },
     ],
   },
+  reloadOnOnline: false,
 };
 export default pwa(config);
