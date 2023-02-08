@@ -25,7 +25,7 @@ export default function LearnSettingsModal({
   const [isRestarted, setIsRestarted] = React.useState(false);
 
   return (
-    <div className="mt-6 flex justify-between px-8">
+    <div className="mt-6 flex justify-between px-2 md:px-8">
       <div className="flex flex-col items-center">
         <button
           onClick={() => {
