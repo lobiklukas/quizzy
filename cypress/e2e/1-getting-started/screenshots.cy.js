@@ -1,4 +1,4 @@
-/// <reference types="cypress" />
+// <reference types="cypress" />
 const { themeChange } = require("theme-change");
 const { themes } = require("../../../src/data");
 
