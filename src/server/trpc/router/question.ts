@@ -45,18 +45,6 @@ export const questionRouter = router({
 
       return result;
     }),
-  unLearn: publicProcedure
-    .input(z.object({ quizId: z.string() }))
-    .mutation(({ input, ctx }) => {
-      return ctx.prisma?.question.updateMany({
-        where: {
-          quizId: input.quizId,
-        },
-        data: {
-          learned: false,
-        },
-      });
-    }),
   delete: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input, ctx }) => {

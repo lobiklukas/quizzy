@@ -2,10 +2,11 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { ChevronLeftIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { type NextPage } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import { LearningComplete } from "../../components/LearnComplete";
+import { LearningEnd } from "../../components/LearnEnd";
 import LearnSettingsModal from "../../components/LearnSettingsModal";
 import { LearningCard } from "../../components/LearningCard";
 import Loading from "../../components/Loading";
@@ -14,8 +15,9 @@ import { requireAuth } from "../../middleware/requireAuth";
 import { useLearningStore } from "../../store/learnStore";
 import { useModalStore } from "../../store/modalStore";
 import { trpc } from "../../utils/trpc";
+import { AnimatePresence } from "framer-motion";
 
-const Learn: NextPage = () => {
+export default function Learn() {
   const router = useRouter();
   const id = (router.query?.quizId as string) || "";
 
@@ -26,11 +28,6 @@ const Learn: NextPage = () => {
   const { isShuffled } = useLearningStore((store) => ({
     isShuffled: store.isShuffled,
   }));
-
-  const [audio, setAudio] = useState<HTMLAudioElement>();
-  useEffect(() => {
-    setAudio(new Audio("/epicsaxguy.mp3"));
-  }, []);
 
   const [selectedIndex, setSelectedIndex] = useState<number>();
   const [isEnd, setIsEnd] = useState(false);
@@ -45,32 +42,15 @@ const Learn: NextPage = () => {
   const { mutateAsync: restartQuizProgress } =
     trpc.quiz.restartProgress.useMutation();
   const { mutate: updateQuestion } = trpc.question.update.useMutation();
-  const { mutateAsync: unLearn } = trpc.question.unLearn.useMutation();
 
   const filteredQuestions = useMemo(() => {
     let questions =
       quiz?.questions.filter((question) => !question.learned) ?? [];
     if (isShuffled) {
-      console.log(
-        "🚀 ~ file: [quizId].tsx:54 ~ filteredQuestions ~ isShuffled",
-        isShuffled
-      );
       questions = questions.sort(() => Math.random() - 0.5);
     }
     return questions;
   }, [isShuffled, quiz?.questions]);
-
-  useEffect(() => {
-    if (!isLoading && filteredQuestions.length === 0 && audio && audio.paused) {
-      audio?.play();
-      audio.loop = true;
-    } else {
-      audio?.pause();
-    }
-    return () => {
-      audio?.pause();
-    };
-  }, [audio, filteredQuestions.length, isLoading]);
 
   const selectedQuestion = useMemo(() => {
     if (filteredQuestions) {
@@ -141,15 +121,6 @@ const Learn: NextPage = () => {
     handleNext();
   };
 
-  const handleRestartProgress = async () => {
-    if (quiz?.id) {
-      await restartQuizProgress({ id: quiz.id });
-      await refetch();
-      setSelectedIndex(0);
-      setIsEnd(false);
-    }
-  };
-
   const openLearningSettings = () => {
     openModal({
       modal: {
@@ -158,6 +129,27 @@ const Learn: NextPage = () => {
         showActions: false,
       },
     });
+  };
+
+  const handleStartOver = async () => {
+    await refetch();
+    setSelectedIndex(0);
+    updateQuiz({
+      studied: (quiz?.studied ?? 0) + 1,
+      selectedQuestionId: filteredQuestions?.[0]?.id,
+      title: quiz.title,
+      id: quiz.id,
+    });
+    setIsEnd(false);
+  };
+
+  const handleRestartProgress = async () => {
+    if (quiz?.id) {
+      await restartQuizProgress({ id: quiz.id });
+      await refetch();
+      setSelectedIndex(0);
+      setIsEnd(false);
+    }
   };
 
   return (
@@ -193,71 +185,27 @@ const Learn: NextPage = () => {
                 max={filteredQuestions?.length}
               />
             </div>
-            {isEnd ? (
-              <div className="h-full">
-                <div className="card min-h-[500px] w-full border border-slate-100 bg-base-100 shadow-xl">
-                  <div className="card-body flex flex-col items-center justify-center gap-y-12 text-center">
-                    <div className="card-title animate-bounce gap-8 text-5xl">
-                      <span className="scale-x-[-1] ">
-                        <Image
-                          src="/confetti.svg"
-                          width={48}
-                          height={48}
-                          alt="confetti"
-                          className="animate-bounce"
-                        />
-                      </span>
-                      <span>Good job! You&apos;re done!</span>
-                      <Image
-                        src="/confetti.svg"
-                        width={48}
-                        height={48}
-                        alt="confetti"
-                        className="animate-bounce"
+            <AnimatePresence initial={false} mode="wait">
+              {isEnd ? (
+                <LearningEnd handleStartOver={handleStartOver} />
+              ) : (
+                questions &&
+                questions.map((item, i) => (
+                  <div
+                    key={item?.id}
+                    className={clsx("mt-2 w-full", i === 1 && "hidden")}
+                  >
+                    {item && (
+                      <LearningCard
+                        handleLerning={handleNext}
+                        handleLearned={handleLearned}
+                        data={item}
                       />
-                    </div>
-                    <Image
-                      src="/happy.gif"
-                      width={200}
-                      height={300}
-                      alt="end"
-                    />
-                    <button
-                      className="btn-primary btn"
-                      onClick={async () => {
-                        await refetch();
-                        setSelectedIndex(0);
-                        updateQuiz({
-                          studied: (quiz?.studied ?? 0) + 1,
-                          selectedQuestionId: filteredQuestions?.[0]?.id,
-                          title: quiz.title,
-                          id: quiz.id,
-                        });
-                        setIsEnd(false);
-                      }}
-                    >
-                      Start over
-                    </button>
+                    )}
                   </div>
-                </div>
-              </div>
-            ) : (
-              questions &&
-              questions.map((item, i) => (
-                <div
-                  key={item?.id}
-                  className={clsx("mt-2 w-full", i === 1 && "hidden")}
-                >
-                  {item && (
-                    <LearningCard
-                      handleLerning={handleNext}
-                      handleLearned={handleLearned}
-                      data={item}
-                    />
-                  )}
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </AnimatePresence>
           </>
         )}
       </div>
@@ -282,46 +230,15 @@ const Learn: NextPage = () => {
         </nav>
       )}
       {!filteredQuestions.length && (
-        <div className="flex flex-col items-center justify-center gap-4 p-4 px-16">
-          <div className="rotate-12">
-            <h1 className="rotate-45 animate-bounce text-3xl font-bold">
-              Good job!
-            </h1>
-          </div>
-          <div className="-rotate-6">
-            <h1 className="rotate-45 animate-bounce text-4xl font-bold">
-              You are amazing!
-            </h1>
-          </div>
-          <Image
-            src="/end.gif"
-            width={200}
-            height={300}
-            alt="end"
-            className="animate-pulse duration-75"
-          />
-          <button
-            onClick={async () => {
-              await unLearn({ quizId: quiz.id });
-              await refetch();
-              setSelectedIndex(0);
-              setIsEnd(false);
-            }}
-            className="btn-primary btn animate-spin"
-          >
-            Restart progress
-          </button>
-        </div>
+        <LearningComplete handleRestart={handleRestartProgress} />
       )}
       <Modal />
     </main>
   );
-};
+}
 
 export const getServerSideProps = requireAuth(async () => {
   return {
     props: {},
   };
 });
-
-export default Learn;
