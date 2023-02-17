@@ -90,6 +90,27 @@ export function LearningCard({
     isLearned == null && " border border-slate-100"
   );
 
+  const editButton = (
+    <button
+      onPointerDownCapture={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (editMode) {
+          const values = methods.getValues();
+          updateQuestion({
+            ...values,
+            quizId: data.quizId as string,
+          });
+        }
+        setEditMode(!editMode);
+      }}
+      className="btn-primary btn-ghost btn-circle btn"
+    >
+      <PencilIcon className="h-6 w-6" />
+    </button>
+  );
+
   return (
     <SwipableCard
       onDragStart={() => setIsDragging(true)}
@@ -101,31 +122,14 @@ export function LearningCard({
         <FormProvider {...methods}>
           <ReactCardFlip isFlipped={showAnswer}>
             <div className={cardClass}>
-              <div className="absolute top-1.5 right-1.5">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (editMode) {
-                      const values = methods.getValues();
-                      updateQuestion({
-                        ...values,
-                        quizId: data.quizId as string,
-                      });
-                    }
-                    setEditMode(!editMode);
-                  }}
-                  className="btn-primary btn-ghost btn-circle btn"
-                >
-                  <PencilIcon className="h-6 w-6" />
-                </button>
-              </div>
+              <div className="absolute top-1.5 right-1.5">{editButton}</div>
               <div className="card-body flex flex-col items-center justify-center gap-2 text-center">
                 {editMode ? (
                   <input
                     {...methods.register("title", {
                       onBlur: handleUpdate,
                     })}
+                    onPointerDownCapture={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
                     className="input-bordered input "
                   />
@@ -135,29 +139,12 @@ export function LearningCard({
               </div>
             </div>
             <div className={cardClass}>
-              <div className="absolute top-1.5 right-1.5">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (editMode) {
-                      const values = methods.getValues();
-                      updateQuestion({
-                        ...values,
-                        quizId: data.quizId as string,
-                      });
-                    }
-                    setEditMode(!editMode);
-                  }}
-                  className="btn-primary btn-ghost btn-circle btn"
-                >
-                  <PencilIcon className="h-6 w-6" />
-                </button>
-              </div>
+              <div className="absolute top-1.5 right-1.5">{editButton}</div>
               <div className="card-body my-auto h-full items-center p-2 md:p-4">
                 {editMode ? (
                   <div
                     className="my-auto h-full w-full"
+                    onPointerDownCapture={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <EditorWrapper name="answer" onBlur={handleUpdate} />
@@ -170,6 +157,7 @@ export function LearningCard({
                 )}
                 <div className="flex justify-center gap-2">
                   <button
+                    onPointerDownCapture={(e) => e.stopPropagation()}
                     className="btn-secondary btn"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -181,6 +169,7 @@ export function LearningCard({
                     Still learning
                   </button>
                   <button
+                    onPointerDownCapture={(e) => e.stopPropagation()}
                     className="btn-primary btn"
                     onClick={(e) => {
                       e.stopPropagation();
