@@ -1,7 +1,6 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { ChevronLeftIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
-import { type NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -25,11 +24,12 @@ export default function Learn() {
     openModal: store.openModal,
   }));
 
-  const { isShuffled } = useLearningStore((store) => ({
+  const { isShuffled, showStaredOnly } = useLearningStore((store) => ({
     isShuffled: store.isShuffled,
+    showStaredOnly: store.showStaredOnly,
   }));
 
-  const [selectedIndex, setSelectedIndex] = useState<number>();
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isEnd, setIsEnd] = useState(false);
 
   const {
@@ -46,11 +46,20 @@ export default function Learn() {
   const filteredQuestions = useMemo(() => {
     let questions =
       quiz?.questions.filter((question) => !question.learned) ?? [];
+    if (showStaredOnly) {
+      questions = quiz?.questions.filter((question) => question.stared) ?? [];
+    }
+
     if (isShuffled) {
       questions = questions.sort(() => Math.random() - 0.5);
     }
+
+    if (questions?.[selectedIndex] === undefined) {
+      setSelectedIndex(0);
+    }
+
     return questions;
-  }, [isShuffled, quiz?.questions]);
+  }, [isShuffled, quiz?.questions, showStaredOnly]);
 
   const selectedQuestion = useMemo(() => {
     if (filteredQuestions) {

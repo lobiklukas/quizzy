@@ -1,9 +1,13 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
+import {
+  PencilIcon,
+  StarIcon as StarIconSolid,
+} from "@heroicons/react/24/solid";
 import type { Question } from "@prisma/client";
 import { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { StarIcon as StarIconOutlined } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import _ from "lodash";
 import "react-quill/dist/quill.snow.css";
@@ -28,6 +32,7 @@ export function LearningCard({
   const [showAnswer, setShowAnswer] = useState(!isFrontFirst);
   const [editMode, setEditMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isStared, setIsStared] = useState(data.stared ?? false);
   const [isLearned, setIsLearned] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -111,6 +116,29 @@ export function LearningCard({
     </button>
   );
 
+  const starButton = (
+    <button
+      onPointerDownCapture={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateQuestion({
+          ...data,
+          stared: !isStared,
+          quizId: data.quizId as string,
+        });
+        setIsStared(!isStared);
+      }}
+      className="btn-primary btn-ghost btn-circle btn"
+    >
+      {isStared ? (
+        <StarIconSolid className="h-6 w-6" />
+      ) : (
+        <StarIconOutlined className="h-6 w-6" />
+      )}
+    </button>
+  );
+
   return (
     <SwipableCard
       onDragStart={() => setIsDragging(true)}
@@ -122,6 +150,7 @@ export function LearningCard({
         <FormProvider {...methods}>
           <ReactCardFlip isFlipped={showAnswer}>
             <div className={cardClass}>
+              <div className="absolute top-1.5 left-1.5">{starButton}</div>
               <div className="absolute top-1.5 right-1.5">{editButton}</div>
               <div className="card-body flex flex-col items-center justify-center gap-2 text-center">
                 {editMode ? (
@@ -139,6 +168,7 @@ export function LearningCard({
               </div>
             </div>
             <div className={cardClass}>
+              <div className="absolute top-1.5 left-1.5">{starButton}</div>
               <div className="absolute top-1.5 right-1.5">{editButton}</div>
               <div className="card-body my-auto h-full items-center p-2 md:p-4">
                 {editMode ? (

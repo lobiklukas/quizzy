@@ -12,6 +12,7 @@ const QuestionCreateSchema = z.object({
 
 export const QuestionUpdateSchema = z.object({
   id: z.string(),
+  stared: z.boolean().optional(),
   order: z.number().optional(),
   title: z.string().optional(),
   quizId: z.string().optional(),

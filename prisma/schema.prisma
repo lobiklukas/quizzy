@@ -106,6 +106,7 @@ model Question {
   quizId  String?
   answer  String  @db.LongText
   learned Boolean @default(false)
+  stared Boolean @default(false)
 
   @@index([quizId])
 }
