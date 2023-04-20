@@ -46,6 +46,7 @@ export default function Learn() {
   const filteredQuestions = useMemo(() => {
     let questions =
       quiz?.questions.filter((question) => !question.learned) ?? [];
+
     if (showStaredOnly) {
       questions = quiz?.questions.filter((question) => question.stared) ?? [];
     }

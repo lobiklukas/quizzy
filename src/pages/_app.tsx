@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { themeChange } from "theme-change";
 import "../styles/globals.css";
 
+
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },

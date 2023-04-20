@@ -17,8 +17,34 @@ html {
   @apply fill-base-content !important;
 }
 
+.ql-hideAndSeek {
+  @apply text-base-content !important;
+}
+
 .ql-toolbar .ql-picker {
   @apply text-base-content !important;
+}
+.hideAndSeek {
+  @apply bg-primary !important;
+}
+.hideAndSeek.text-hidden {
+  @apply text-primary !important;
+}
+
+.quill-preview {
+  @apply my-auto h-full animate-none transition-none;
+}
+.quill-preview .hideAndSeek {
+  @apply px-2 !important;
+  @apply py-1 !important;
+}
+
+.quill-preview .ql-tooltip {
+  @apply hidden;
+}
+.quill-preview * {
+  @apply text-lg;
+  user-select: text !important; /* Standard syntax */
 }
 
 .card-body .ql-editor ol,

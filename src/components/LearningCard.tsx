@@ -15,6 +15,12 @@ import { EditorWrapper } from "../EditorWrapper";
 import { useLearningStore } from "../store/learnStore";
 import { trpc } from "../utils/trpc";
 import { SwipableCard } from "./SwipableCard";
+import dynamic from "next/dynamic";
+
+const QuilPreview = dynamic(() => import("./QuillPreview"), {
+  ssr: false,
+});
+
 export interface ILergingCardProps {
   data: Question;
   handleLerning: () => void;
@@ -180,10 +186,11 @@ export function LearningCard({
                     <EditorWrapper name="answer" onBlur={handleUpdate} />
                   </div>
                 ) : (
-                  <div
-                    className="ql-editor my-auto h-full animate-none text-lg transition-none"
-                    dangerouslySetInnerHTML={{ __html: data.answer ?? "" }}
-                  />
+                  <QuilPreview value={data.answer} />
+                  // <div
+                  //   className="ql-editor my-auto h-full animate-none text-lg transition-none"
+                  //   dangerouslySetInnerHTML={{ __html: data.answer ?? "" }}
+                  // />
                 )}
                 <div className="flex justify-center gap-2">
                   <button
