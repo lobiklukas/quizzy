@@ -1,4 +1,4 @@
-import * as React from "react";
+import type { GetStaticPaths } from "next";
 import NavBar from "../../components/LandingPage/NavBar";
 import { useTheme } from "../../hooks/useTheme";
 import fs from "fs";
@@ -42,15 +42,3 @@ export const getStaticProps = () => {
     },
   };
 };
-
-export const getStaticPaths = async () => {
-  const posts = getAllPosts();
-  const paths = posts.map((post) => ({
-    params: { slug: post.slug },
-  }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-}
