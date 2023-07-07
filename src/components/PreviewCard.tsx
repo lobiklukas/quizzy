@@ -57,15 +57,15 @@ export default function PreviewCard({
         <p>{description}</p>
         <div className="card-actions mt-2 justify-center gap-2 lg:gap-4">
           <Link
-            slot="./learn/[quizId]"
-            href={`./learn/${id}`}
+            slot="./app/learn/[quizId]"
+            href={`./app/learn/${id}`}
             className="btn-primary btn"
           >
             Learn
           </Link>
           <Link
-            slot="./quiz/[quizId]"
-            href={`./quiz/${id}`}
+            slot="./app/quiz/[quizId]"
+            href={`./app/quiz/${id}`}
             className="btn-primary btn"
           >
             Edit

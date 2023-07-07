@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import { EditorWrapper } from "../../EditorWrapper";
-import Loading from "../../components/Loading";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { requireAuth } from "../../middleware/requireAuth";
-import { trpc } from "../../utils/trpc";
-import { useConnection } from "../../hooks/useConnection";
+import { EditorWrapper } from "../../../EditorWrapper";
+import Loading from "../../../components/Loading";
+import { useLocalStorage } from "../../../hooks/useLocalStorage";
+import { requireAuth } from "../../../middleware/requireAuth";
+import { trpc } from "../../../utils/trpc";
+import { useConnection } from "../../../hooks/useConnection";
 import clsx from "clsx";
 
 type Question = {
@@ -234,7 +234,7 @@ const Home: NextPage = () => {
     <FormProvider {...methods}>
       <nav className="sticky top-0 z-10 w-full bg-base-200 p-2 drop-shadow-md md:px-16">
         <div className="container mx-auto flex items-center justify-between">
-          <Link href="/" className="btn-accent btn-circle btn mr-2">
+          <Link href="/app" className="btn-accent btn-circle btn mr-2">
             <ChevronLeftIcon className="h-6 w-6" />
           </Link>
           <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ const Home: NextPage = () => {
               <div className="text-base">Saving...</div>
             ) : (
               <span>
-                Naposledy uloženo:{" "}
+                Last saved:{" "}
                 {(lastSubmit?.updated ?? updatedAt)?.toLocaleString("cs")}
               </span>
             )}

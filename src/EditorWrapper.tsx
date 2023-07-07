@@ -41,3 +41,5 @@ export const EditorWrapper: React.FC<IEditorWrapperProps> = ({
     </>
   );
 };
+
+export default EditorWrapper;

@@ -4,16 +4,16 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { LearningComplete } from "../../components/LearnComplete";
-import { LearningEnd } from "../../components/LearnEnd";
-import LearnSettingsModal from "../../components/LearnSettingsModal";
-import { LearningCard } from "../../components/LearningCard";
-import Loading from "../../components/Loading";
-import Modal from "../../components/Modal";
-import { requireAuth } from "../../middleware/requireAuth";
-import { useLearningStore } from "../../store/learnStore";
-import { useModalStore } from "../../store/modalStore";
-import { trpc } from "../../utils/trpc";
+import { LearningComplete } from "../../../components/LearnComplete";
+import { LearningEnd } from "../../../components/LearnEnd";
+import LearnSettingsModal from "../../../components/LearnSettingsModal";
+import { LearningCard } from "../../../components/LearningCard";
+import Loading from "../../../components/Loading";
+import Modal from "../../../components/Modal";
+import { requireAuth } from "../../../middleware/requireAuth";
+import { useLearningStore } from "../../../store/learnStore";
+import { useModalStore } from "../../../store/modalStore";
+import { trpc } from "../../../utils/trpc";
 import { AnimatePresence } from "framer-motion";
 
 export default function Learn() {
@@ -60,7 +60,7 @@ export default function Learn() {
     }
 
     return questions;
-  }, [isShuffled, quiz?.questions, showStaredOnly]);
+  }, [isShuffled, quiz?.questions, selectedIndex, showStaredOnly]);
 
   const selectedQuestion = useMemo(() => {
     if (filteredQuestions) {
@@ -165,7 +165,7 @@ export default function Learn() {
   return (
     <main id="#learning-card" className="container mx-auto min-h-screen">
       <nav className="mb-auto flex w-full items-center justify-between p-4">
-        <Link href="/" className="btn-secondary btn-circle btn font-bold">
+        <Link href="/app" className="btn-secondary btn-circle btn font-bold">
           <ChevronLeftIcon className="h-5 w-5" />
         </Link>
 

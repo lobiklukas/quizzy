@@ -26,4 +26,4 @@ export class HideAndSeekBlot extends Embed {
   }
 }
 HideAndSeekBlot.blotName = "hideAndSeek";
-HideAndSeekBlot.tagName = "SPAN";
+HideAndSeekBlot.tagName = "div";

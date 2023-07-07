@@ -26,6 +26,7 @@ html {
 }
 .hideAndSeek {
   @apply bg-primary !important;
+  @apply inline-block !important;
 }
 .hideAndSeek.text-hidden {
   @apply text-primary !important;
@@ -35,8 +36,8 @@ html {
   @apply my-auto h-full animate-none transition-none;
 }
 .quill-preview .hideAndSeek {
-  @apply px-2 !important;
-  @apply py-1 !important;
+  @apply mx-2 !important;
+  @apply my-1 !important;
 }
 
 .quill-preview .ql-tooltip {

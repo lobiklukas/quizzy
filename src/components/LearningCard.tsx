@@ -11,13 +11,16 @@ import { StarIcon as StarIconOutlined } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import _ from "lodash";
 import "react-quill/dist/quill.snow.css";
-import { EditorWrapper } from "../EditorWrapper";
 import { useLearningStore } from "../store/learnStore";
 import { trpc } from "../utils/trpc";
 import { SwipableCard } from "./SwipableCard";
 import dynamic from "next/dynamic";
 
 const QuilPreview = dynamic(() => import("./QuillPreview"), {
+  ssr: false,
+});
+
+const EditorWrapper = dynamic(() => import("../EditorWrapper"), {
   ssr: false,
 });
 
@@ -186,11 +189,9 @@ export function LearningCard({
                     <EditorWrapper name="answer" onBlur={handleUpdate} />
                   </div>
                 ) : (
-                  <QuilPreview value={data.answer} />
-                  // <div
-                  //   className="ql-editor my-auto h-full animate-none text-lg transition-none"
-                  //   dangerouslySetInnerHTML={{ __html: data.answer ?? "" }}
-                  // />
+                  <div className="m-8">
+                    <QuilPreview value={data.answer} />
+                  </div>
                 )}
                 <div className="flex justify-center gap-2">
                   <button
