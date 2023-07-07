@@ -35,7 +35,7 @@ export default function Folder({
       onClick={openFolder}
     >
       <div className="card-body ">
-        <span className="badge-accent badge indicator-item h-8 w-8">
+        <span className="badge-accent badge indicator-item h-8 w-8 z-0">
           {numberOfQuizzes}
         </span>
         <h2 className="card-title flex justify-between">

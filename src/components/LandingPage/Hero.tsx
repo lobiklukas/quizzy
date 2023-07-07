@@ -8,7 +8,7 @@ interface IHeroProps {
 
 function Hero({ theme }: IHeroProps) {
   return (
-    <div className="hero min-h-screen  bg-base-200">
+    <div className="hero min-h-screen bg-base-200">
       <div className="hero-content mt-12 flex-col gap-12 text-center lg:mt-0 lg:flex-row-reverse lg:justify-around lg:text-left">
         <div>
           <h1 className="text-5xl  font-bold text-secondary">

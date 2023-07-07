@@ -19,7 +19,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Sidebar>
-        <main ref={animationParent} className="container flex flex-col gap-2">
+        <main ref={animationParent} className="container mx-auto flex flex-col gap-2">
           <MainNavBar />
           {content}
         </main>

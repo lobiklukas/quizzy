@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeSwitch } from "../ThemeSwitch";
+import clsx from "clsx";
 
 const pages = [
   {
@@ -12,9 +13,12 @@ const pages = [
   },
   {
     name: "About",
-    href: "/blog",
+    href: "/about",
   },
 ];
+
+let window: any;
+if (window) window = window ?? {};
 
 interface INavBarProps {
   theme: string;
@@ -22,6 +26,7 @@ interface INavBarProps {
 }
 
 function NavBar({ theme, setTheme }: INavBarProps) {
+  const activeLink = window?.location.pathname;
   return (
     <div className="navbar fixed z-10 bg-base-100">
       <div className="navbar-start">
@@ -53,16 +58,21 @@ function NavBar({ theme, setTheme }: INavBarProps) {
             ))}
           </ul>
         </div>
-        <a className="btn-ghost btn text-xl normal-case">
+        <Link href="/" className="btn-ghost btn text-xl normal-case gap-0">
           <span className="text-3xl text-primary">Q</span>
           uizzy
-        </a>
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
+        <ul className="menu menu-horizontal gap-4 px-1">
           {pages.map(({ name, href }) => (
             <li key={name}>
-              <Link href={href}>{name}</Link>
+              <Link
+                className={clsx(activeLink === href && "active")}
+                href={href}
+              >
+                {name}
+              </Link>
             </li>
           ))}
         </ul>

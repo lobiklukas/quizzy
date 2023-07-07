@@ -26,7 +26,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ children }) => {
   }, [width]);
 
   return (
-    <div className="drawer-mobile drawer relative">
+    <div className="lg:drawer-open drawer relative h-full">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <button
         onClick={() => setIsShrinked(!isShrinked)}
@@ -49,7 +49,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ children }) => {
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
         <ul
           className={clsx(
-            "menu relative items-center gap-4 bg-base-100 p-4 text-base-content transition-all duration-300 ease-in-out",
+            "menu h-full relative items-center gap-4 bg-base-100 p-4 text-base-content transition-all duration-300 ease-in-out",
             isShrinked ? "w-24 " : "w-72"
           )}
         >

@@ -4,7 +4,13 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/outline";
 
-function AppStats() {
+interface IAppStatsProps {
+  registeredUsers: number;
+learnedCards: number;
+numOfQuizes: number;
+}
+
+function AppStats({ registeredUsers, learnedCards, numOfQuizes }: IAppStatsProps) {
   return (
     <div className="my-16 bg-base-300 py-24">
       <section className="container mx-auto flex">
@@ -14,17 +20,15 @@ function AppStats() {
               <UsersIcon className="inline-block h-8 w-8 stroke-current" />
             </div>
             <div className="stat-title">Registered users</div>
-            <div className="stat-value">31K</div>
-            <div className="stat-desc">Jan 1st - Feb 1st</div>
+            <div className="stat-value">{registeredUsers}</div>
           </div>
 
           <div className="stat">
             <div className="stat-figure text-secondary">
               <AcademicCapIcon className="inline-block h-8 w-8 stroke-current" />
             </div>
-            <div className="stat-title">Learned flashcards</div>
-            <div className="stat-value">4,200</div>
-            <div className="stat-desc">↗︎ 400 (22%)</div>
+            <div className="stat-title">Created flashcards</div>
+            <div className="stat-value">{learnedCards}</div>
           </div>
 
           <div className="stat">
@@ -32,8 +36,7 @@ function AppStats() {
               <CubeIcon className="inline-block h-8 w-8 stroke-current" />
             </div>
             <div className="stat-title">Created quizes</div>
-            <div className="stat-value">1,200</div>
-            <div className="stat-desc">↘︎ 90 (14%)</div>
+            <div className="stat-value">{numOfQuizes}</div>
           </div>
         </div>
       </section>

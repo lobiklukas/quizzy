@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 const QuestionCreateSchema = z.object({
   title: z.string(),
@@ -23,7 +23,7 @@ export const QuestionUpdateSchema = z.object({
 export type QuizUpdateSchemaType = z.infer<typeof QuestionUpdateSchema>;
 
 export const questionRouter = router({
-  create: publicProcedure
+  create: protectedProcedure
     .input(QuestionCreateSchema)
     .mutation(({ input, ctx }) => {
       return ctx.prisma?.question.create({
@@ -32,7 +32,7 @@ export const questionRouter = router({
         },
       });
     }),
-  update: publicProcedure
+  update: protectedProcedure
     .input(QuestionUpdateSchema)
     .mutation(async ({ input, ctx }) => {
       const result = await ctx.prisma?.question.update({
@@ -46,7 +46,7 @@ export const questionRouter = router({
 
       return result;
     }),
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input, ctx }) => {
       return ctx.prisma?.question.delete({

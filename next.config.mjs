@@ -28,6 +28,7 @@ const config = {
         hostname: "lh3.googleusercontent.com",
       },
     ],
+    domains: ["picsum.photos"],
   },
   reloadOnOnline: false,
 };

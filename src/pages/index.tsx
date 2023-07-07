@@ -5,8 +5,31 @@ import Hero from "../components/LandingPage/Hero";
 import NavBar from "../components/LandingPage/NavBar";
 import Reviews from "../components/LandingPage/Reviews";
 import { useTheme } from "../hooks/useTheme";
+import { appRouter } from "../server/trpc/router/_app";
+import { createContext } from "../server/trpc/context";
 
-const Home: NextPage = () => {
+interface IHomeProps {
+  registeredUsers: number;
+  learnedCards: number;
+  numOfQuizes: number;
+}
+
+export const getServerSideProps = async (ctx: any) => {
+    // const context = await createContext(ctx) might be required depending on your setup
+  const trpc = appRouter.createCaller(await createContext(ctx));
+  const result = await trpc.stats.getAllStats();
+  return {
+    props: {
+      ...result,
+    },
+  };
+}
+
+const Home: NextPage<IHomeProps> = ({
+  registeredUsers,
+  learnedCards,
+  numOfQuizes
+}) => {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -111,11 +134,17 @@ const Home: NextPage = () => {
             information more effectively and make studying more enjoyable.
           </p>
         </section>
-        <AppStats />
+        <AppStats
+          registeredUsers={registeredUsers}
+          learnedCards={learnedCards}
+          numOfQuizes={numOfQuizes}
+
+        />
         <Reviews />
       </main>
     </>
   );
 };
+
 
 export default Home;
