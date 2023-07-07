@@ -177,7 +177,7 @@ export default function Learn() {
         </button>
       </nav>
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
-        {!!filteredQuestions.length && (
+        {!!questions?.length && (
           <>
             <div
               key={quiz.id}
@@ -199,10 +199,10 @@ export default function Learn() {
               {isEnd ? (
                 <LearningEnd handleStartOver={handleStartOver} />
               ) : (
-                questions &&
+                questions.length &&
                 questions.map((item, i) => (
                   <div
-                    key={item?.id}
+                    key={item?.id ?? i}
                     className={clsx("mt-2 w-full", i === 1 && "hidden")}
                   >
                     {item && (

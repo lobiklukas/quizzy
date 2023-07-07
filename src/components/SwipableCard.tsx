@@ -21,7 +21,6 @@ export const SwipableCard = ({
   onDragChange,
   onDragEnd,
 }: ISwipableCard) => {
-  // motion stuff
   const [dragStart, setDragStart] = useState<DragStart>({
     axis: null,
     animation: { x: 0, y: 0 },
@@ -90,7 +89,7 @@ export const SwipableCard = ({
       animate={{ ...dragStart.animation, opacity: 1 }}
       transition={{ type: "spring", stiffness: 500, damping: 50 }}
       whileTap={{ scale: 0.85 }}
-      exit={{ opacity: 0, x: getExitDirection() }}
+      exit={{ opacity: 0, x: getExitDirection(),transition: { duration: 0.2 } }}
     >
       {children}
     </motion.div>
