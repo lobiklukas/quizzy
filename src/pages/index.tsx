@@ -15,12 +15,15 @@ interface IHomeProps {
 }
 
 export const getServerSideProps = async (ctx: any) => {
-    // const context = await createContext(ctx) might be required depending on your setup
+    // const context = await createContext(ctx) //might be required depending on your setup
   const trpc = appRouter.createCaller(await createContext(ctx));
   const result = await trpc.stats.getAllStats();
   return {
     props: {
       ...result,
+      // registeredUsers: 0,
+      // learnedCards: 0,
+      // numOfQuizes: 0,
     },
   };
 }

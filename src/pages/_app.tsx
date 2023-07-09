@@ -1,5 +1,5 @@
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+// import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 
 import { trpc } from "../utils/trpc";
@@ -8,6 +8,7 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { themeChange } from "theme-change";
 import "../styles/globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -36,11 +37,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
         />
       </Head>
-      <SessionProvider session={session}>
+          <ClerkProvider>
+      {/* <SessionProvider session={session}> */}
         <div>
           <Component {...pageProps} />
         </div>
-      </SessionProvider>
+      {/* </SessionProvider> */}
+    </ClerkProvider>
     </>
   );
 };

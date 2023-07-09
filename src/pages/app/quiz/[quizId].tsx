@@ -8,10 +8,10 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { EditorWrapper } from "../../../EditorWrapper";
 import Loading from "../../../components/Loading";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
-import { requireAuth } from "../../../middleware/requireAuth";
 import { trpc } from "../../../utils/trpc";
 import { useConnection } from "../../../hooks/useConnection";
 import clsx from "clsx";
+import { requireAuth } from "../../../middleware/requireAuth";
 
 type Question = {
   id: number;

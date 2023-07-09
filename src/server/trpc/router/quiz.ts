@@ -32,7 +32,7 @@ export const quizRouter = router({
         data: {
           title: input.title,
           description: input.description ?? "",
-          userId: ctx.session?.user?.id ?? "",
+          userId: ctx.session?.userId ?? "",
         },
       });
     }),
@@ -45,7 +45,7 @@ export const quizRouter = router({
         },
         data: {
           ..._.omit(input, "questions"),
-          userId: ctx.session.user.id,
+          userId: ctx.session.userId,
         },
       });
       let questions = [] as Question[];
@@ -106,8 +106,8 @@ export const quizRouter = router({
           },
         },
         where: input.includeInFolder
-          ? { userId: ctx.session.user.id }
-          : { folderId: null, userId: ctx.session.user.id },
+          ? { userId: ctx.session.userId }
+          : { folderId: null, userId: ctx.session.userId },
         orderBy: {
           updatedAt: "desc",
         },
@@ -130,7 +130,7 @@ export const quizRouter = router({
       return ctx.prisma.quiz.findFirst({
         where: {
           id: input.id,
-          userId: ctx.session.user.id,
+          userId: ctx.session.userId,
         },
         include: {
           questions: !!hasQuestion

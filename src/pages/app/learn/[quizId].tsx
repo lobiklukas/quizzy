@@ -10,11 +10,11 @@ import LearnSettingsModal from "../../../components/LearnSettingsModal";
 import { LearningCard } from "../../../components/LearningCard";
 import Loading from "../../../components/Loading";
 import Modal from "../../../components/Modal";
-import { requireAuth } from "../../../middleware/requireAuth";
 import { useLearningStore } from "../../../store/learnStore";
 import { useModalStore } from "../../../store/modalStore";
 import { trpc } from "../../../utils/trpc";
 import { AnimatePresence } from "framer-motion";
+import { requireAuth } from "../../../middleware/requireAuth";
 
 export default function Learn() {
   const router = useRouter();

@@ -1,16 +1,15 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-// eslint-disable-next-line camelcase
-import { unstable_getServerSession } from "next-auth";
 import { env } from "../env/server.mjs";
-import { AUTH_ROUTES, authOptions } from "../pages/api/auth/[...nextauth]";
+import { AUTH_ROUTES } from "../pages/api/auth/[...nextauth]";
+import { getAuth } from "@clerk/nextjs/server";
 
 export const requireAuth =
   (func: GetServerSideProps) => async (ctx: GetServerSidePropsContext) => {
-    const session = await unstable_getServerSession(
+    console.log("🚀 ~ file: middleware.ts:21 ~ ctx.req:", ctx.req)
+    const session = await getAuth(
       ctx.req,
-      ctx.res,
-      authOptions
     );
+    console.log("🚀 ~ file: middleware.ts:22 ~ session:", session)
 
     if (!session && env.DISABLE_AUTH !== "1") {
       return {

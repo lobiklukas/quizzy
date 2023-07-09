@@ -9,7 +9,7 @@ import autoAnimate from "@formkit/auto-animate";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { FolderPlusIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import CreateFolderModal from "../components/CreateFolderModal";
 import Folder from "../components/Folder";
@@ -19,6 +19,7 @@ import { useModalStore } from "../store/modalStore";
 import { useSearchStore } from "../store/searchStore";
 import { trpc } from "../utils/trpc";
 import Loading from "./Loading";
+import { auth, useUser } from "@clerk/nextjs";
 
 const Dashboard: React.FC = () => {
   const openModal = useModalStore((state) => state.openModal);
@@ -29,7 +30,8 @@ const Dashboard: React.FC = () => {
   const animateQuizRef = useRef(null);
 
   const utils = trpc.useContext();
-  const { data: session } = useSession();
+  const session = useUser();
+  console.log("🚀 ~ file: Dashboard.tsx:34 ~ session:", session)
   const { data, isLoading, refetch } = trpc.quiz.getAll.useQuery({
     includeInFolder: true,
   });

@@ -5,10 +5,12 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 import clsx from "clsx";
-import { signOut, useSession } from "next-auth/react";
+// import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import * as React from "react";
 import { useSearchStore } from "../store/searchStore";
+import { SignOutButton, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/router";
 
 export const MainNavBar: React.FC = () => {
   const { setSearch, search, isSearchEnabled } = useSearchStore((state) => ({
@@ -16,7 +18,10 @@ export const MainNavBar: React.FC = () => {
     search: state.search,
     isSearchEnabled: state.isSearchEnabled,
   }));
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
+    const { push } = useRouter();
+  const session = useUser();
+  console.log("🚀 ~ file: MainNavBar.tsx:22 ~ session:", session)
   return (
     <div className="navbar flex w-full gap-2 md:mb-8 md:gap-4">
       <div className="flex w-full md:gap-2">
@@ -58,17 +63,17 @@ export const MainNavBar: React.FC = () => {
           className="btn-ghost btn-circle avatar btn flex w-full flex-nowrap gap-2"
         >
           <div className="w-10 rounded-full">
-            {session?.user?.image && (
+            {session.user?.imageUrl && (
               <Image
                 width={256}
                 height={256}
                 alt="Profile Picture"
-                src={session.user.image}
+                src={session.user.imageUrl}
               />
             )}
           </div>
           <span className="hidden whitespace-nowrap md:block">
-            {session?.user?.name || session?.user?.email}
+            {session?.user?.username}
           </span>
           <ChevronDownIcon className="hidden h-6 w-6 md:block" />
         </label>
@@ -78,16 +83,10 @@ export const MainNavBar: React.FC = () => {
           className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-100 p-2 shadow"
         >
           <li>
-            <a className="justify-between">
-              Profile
-              <span className="badge">New</span>
-            </a>
-          </li>
-          <li>
-            <a>Settings</a>
-          </li>
-          <li>
-            <a onClick={() => signOut()}>Logout</a>
+        <SignOutButton signOutCallback={()=>push('/')} >
+            <button>Logout</button>
+        </SignOutButton>
+            {/* <a onClick={() => signOut()}>Logout</a> */}
           </li>
         </ul>
       </div>

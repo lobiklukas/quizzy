@@ -26,7 +26,7 @@ export const folderRouter = router({
       return ctx.prisma.folder.create({
         data: {
           title: input.title,
-          userId: ctx.session?.user?.id ?? "",
+          userId: ctx.session?.userId ?? "",
         },
       });
     }),
@@ -78,7 +78,7 @@ export const folderRouter = router({
         },
         data: {
           ..._.omit(input, "questions"),
-          userId: ctx.session?.user?.id ?? "",
+          userId: ctx.session?.userId ?? "",
         },
       });
       let questions = [] as Question[];
@@ -123,7 +123,7 @@ export const folderRouter = router({
         },
       },
       where: {
-        userId: ctx.session?.user?.id ?? "",
+        userId: ctx.session?.userId ?? "",
       },
     });
   }),
