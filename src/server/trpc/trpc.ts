@@ -1,6 +1,5 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { getAuth } from "@clerk/nextjs/server";
 
 import { type Context } from "./context";
 
@@ -23,7 +22,6 @@ export const publicProcedure = t.procedure;
  * users are logged in
  */
 const isAuthed = t.middleware(({ ctx, next }) => {
-    console.log("🚀 ~ file: trpc.ts:27 ~ isAuthed ~ ctx.session:", ctx.session)
   if (!ctx.session || !ctx.session.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
