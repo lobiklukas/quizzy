@@ -69,7 +69,6 @@ function PostContent({ postData }: IPostContentProps) {
             </div>
         </div >
         </>
-
     )
 }
 
