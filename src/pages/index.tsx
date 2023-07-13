@@ -53,7 +53,7 @@ const Home: NextPage<IHomeProps> = ({
                 <p className="pt-4">
                   Research shows that testing yourself with flashcards is more
                   effective than rereading your notes. From math to medicine to
-                  modern languages, Quizlet is used by students in over 100
+                  modern languages, Quizzy is used by students in over 100
                   different subjects.
                 </p>
               </div>
