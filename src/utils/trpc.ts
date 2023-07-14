@@ -23,6 +23,12 @@ export const trpc = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          async fetch(url, options) {
+                        return fetch(url, {
+                            ...options,
+                            credentials: "include",
+                        });
+                    },
         }),
       ],
     };

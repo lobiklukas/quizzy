@@ -14,19 +14,20 @@ interface IHomeProps {
   numOfQuizes: number;
 }
 
-export const getServerSideProps = async (ctx: any) => {
-    // const context = await createContext(ctx) //might be required depending on your setup
-  const trpc = appRouter.createCaller(await createContext(ctx));
+export async function getStaticProps() {
+  const trpc = appRouter.createCaller(await createContext());
   const result = await trpc.stats.getAllStats();
   return {
     props: {
       ...result,
-      // registeredUsers: 0,
-      // learnedCards: 0,
-      // numOfQuizes: 0,
     },
-  };
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every 10 seconds
+    revalidate: 300, // In seconds
+  }
 }
+
 
 const Home: NextPage<IHomeProps> = ({
   registeredUsers,
