@@ -4,6 +4,7 @@ import Link from 'next/link'
 import ReactMarkdown from 'react-markdown';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import type { Post } from '../../utils/blog-helpers';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 interface IPostContentProps {
     postData: Post;

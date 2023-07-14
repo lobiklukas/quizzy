@@ -1,9 +1,10 @@
 
 
+import type { GetStaticProps } from 'next';
 import PostContent from '../../components/Blog/PostContent';
 import { getPostData, getPostsFiles } from '../../utils/blog-helpers';
 
-function SinglePost({ data } : {data: any}) {
+function SinglePost({ data } : {data: ReturnType<typeof getPostData>}) {
     return (
         <>
             <PostContent postData={data} />
@@ -11,15 +12,14 @@ function SinglePost({ data } : {data: any}) {
     )
 }
 
-export const getStaticProps = (context: any) => {
+export const getStaticProps: GetStaticProps = (context) => {
     const { params } = context;
-    const { slug } = params
-    const postData = getPostData(slug);
+    const slug = params?.slug ?? "";
+    const postData = getPostData(slug as string);
     return {
         props: {
             data: postData
         },
-        revalidate: 600,
     }
 }
 export const getStaticPaths = () => {

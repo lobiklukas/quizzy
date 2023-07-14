@@ -26,6 +26,7 @@ export default function FolderView({
 }: IFolderViewProps) {
   const [activeId, setActiveId] = useState<string | null>();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
 
@@ -35,6 +36,7 @@ export default function FolderView({
     setActiveId(null);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id);
   };

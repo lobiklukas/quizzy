@@ -64,7 +64,7 @@ const Home: NextPage = () => {
   const [storedValue, storeValue] = useLocalStorage("quiz", quiz);
   const [lastSubmit, setLastSubmit] = useState<{
     updated: Date;
-    values: any;
+    values: Quiz;
   }>();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -170,7 +170,7 @@ const Home: NextPage = () => {
       })),
     });
     if (result) {
-      setLastSubmit({ updated: result.updatedAt, values: values });
+      setLastSubmit({ updated: result.updatedAt, values: values as unknown as  Quiz });
       setToastMessage("Saved");
       setTimeout(() => {
         setToastMessage(null);

@@ -13,7 +13,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
+  // pageProps: { session, ...pageProps },
 }) => {
   useEffect(() => {
     themeChange(false);

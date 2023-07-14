@@ -17,6 +17,7 @@ const pages = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let window: any;
 if (window) window = window ?? {};
 

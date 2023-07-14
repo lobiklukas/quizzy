@@ -4,7 +4,7 @@ import { useModalStore } from "../store/modalStore";
 
 export default function Modal() {
   // Create modal for creating new folder using headlessui
-  const { isOpen, closeModal, onConfirm, modal } = useModalStore((state) => ({
+  const { isOpen, closeModal, onConfirm } = useModalStore((state) => ({
     isOpen: state.isOpen,
     onConfirm: state.onConfirm,
     closeModal: state.closeModal,

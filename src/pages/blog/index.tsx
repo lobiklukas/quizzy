@@ -1,4 +1,3 @@
-import type { GetStaticPaths } from "next";
 import NavBar from "../../components/LandingPage/NavBar";
 import { useTheme } from "../../hooks/useTheme";
 import fs from "fs";

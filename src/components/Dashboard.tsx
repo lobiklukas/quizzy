@@ -19,7 +19,7 @@ import { useModalStore } from "../store/modalStore";
 import { useSearchStore } from "../store/searchStore";
 import { trpc } from "../utils/trpc";
 import Loading from "./Loading";
-import { auth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 const Dashboard: React.FC = () => {
   const openModal = useModalStore((state) => state.openModal);
@@ -295,6 +295,7 @@ const Dashboard: React.FC = () => {
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
 
@@ -307,6 +308,7 @@ const Dashboard: React.FC = () => {
     setActiveId(null);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDragStart = (event: any) => {
     if (isDeleting) return;
     setActiveId(event.active.id);
